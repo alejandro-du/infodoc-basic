@@ -4,11 +4,11 @@ import infodoc.basic.BasicConstants;
 import infodoc.core.container.PropertyContainer;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Property;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
 import infodoc.core.field.FieldFactory;
 import infodoc.core.field.FieldType;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
 
 import java.util.ArrayList;
 
@@ -26,11 +26,11 @@ public class BooleanField implements FieldFactory {
 		
 		private static final long serialVersionUID = 1L;
 		
-		private ProcessInstanceForm form;
+		private CaseForm form;
 		private ArrayList<Property> propertiesToShowIfTrue;
 		private ArrayList<Property> propertiesToShowIfFalse;
 		
-		public BooleanoCheckBox(ProcessInstanceForm form) {
+		public BooleanoCheckBox(CaseForm form) {
 			this.form = form;
 			addListener((ValueChangeListener) this);
 			setImmediate(true);
@@ -79,7 +79,7 @@ public class BooleanField implements FieldFactory {
 	}
 	
 	@Override
-	public Field getField(Property property, final ProcessInstanceForm form, Activity activity, Process process, Application application) {
+	public Field getField(Property property, final CaseForm form, Activity activity, Form formDto, Application application) {
 		final BooleanoCheckBox checkBox = new BooleanoCheckBox(form);
 		
 		if(property.getParameter() != null && !property.getParameter().trim().isEmpty()) {
@@ -119,8 +119,8 @@ public class BooleanField implements FieldFactory {
 	}
 
 	@Override
-	public Field getSearchField(Property property, ProcessInstanceForm form, Activity activity, Process process, Application application) {
-		return getField(property, form, activity, process, application);
+	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
+		return getField(property, form, activity, formDto, application);
 	}
 
 	@Override

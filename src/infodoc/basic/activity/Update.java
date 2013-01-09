@@ -2,12 +2,12 @@ package infodoc.basic.activity;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityListExecutorTemplate;
-import infodoc.core.ui.comun.InfodocTheme;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.HashSet;
 
@@ -27,12 +27,12 @@ public class Update extends ActivityListExecutorTemplate {
 	}
 	
 	@Override
-	public void execute(ProcessInstanceForm form) {
+	public void execute(CaseForm form) {
 		form.validate();
 		HashSet<User> users = new HashSet<User>();
 		users.add(getUser());
-		ProcessInstance processInstance = InfodocContainerFactory.getProcessInstanceContainer().getEntity(form.getProcessInstance().getId());
-		InfodocContainerFactory.getProcessInstanceContainer().updateInstance(processInstance, form.getPropertyValues(), getNewActivityInstance(processInstance, form.getComments(), users, null));
+		Case caseDto = InfodocContainerFactory.getCaseContainer().getEntity(form.getCase().getId());
+		InfodocContainerFactory.getCaseContainer().updateInstance(caseDto, form.getPropertyValues(), getNewActivityInstance(caseDto, form.getComments(), users, null));
 		update();
 	}
 
@@ -43,7 +43,7 @@ public class Update extends ActivityListExecutorTemplate {
 
 	@Override
 	public Resource getIcon() {
-		return new ThemeResource(InfodocTheme.iconActivityProcess);
+		return new ThemeResource(InfodocTheme.iconActivityForm);
 	}
 
 }

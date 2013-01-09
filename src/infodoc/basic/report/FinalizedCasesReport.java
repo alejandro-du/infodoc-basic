@@ -1,9 +1,9 @@
 package infodoc.basic.report;
 
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -11,12 +11,12 @@ import java.util.List;
 
 import com.vaadin.ui.FormLayout;
 
-public class FinalizedProcessesReport extends AbstractProcessInstancesListReport {
+public class FinalizedCasesReport extends AbstractCasesListReport {
 
 	private static final long serialVersionUID = 1L;
 
-	public FinalizedProcessesReport(Process process, JavaReport report) {
-		super(process, report);
+	public FinalizedCasesReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class FinalizedProcessesReport extends AbstractProcessInstancesListReport
 	}
 	
 	@Override
-	public List<ProcessInstance> getProcessInstances() {
-		return InfodocContainerFactory.getProcessInstanceContainer().findFinishedByProcessId(process.getId(), (Date) fromDateField.getValue(), (Date) toDateField.getValue());
+	public List<Case> getCases() {
+		return InfodocContainerFactory.getCaseContainer().findFinishedByFormId(form.getId(), (Date) fromDateField.getValue(), (Date) toDateField.getValue());
 	}
 
 	@Override

@@ -2,8 +2,8 @@ package infodoc.basic.report;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
-import infodoc.core.ui.comun.InfodocReport;
+import infodoc.core.dto.Form;
+import infodoc.core.ui.common.InfodocReport;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -21,8 +21,8 @@ public abstract class AbstractDateIntervalReport extends InfodocReport {
 	protected InlineDateField fromDateField = new InlineDateField(BasicConstants.uiFrom);
 	protected InlineDateField toDateField = new InlineDateField(BasicConstants.uiTo);
 	
-	public AbstractDateIntervalReport(Process process, JavaReport report) {
-		super(process, report);
+	public AbstractDateIntervalReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 	
 	@Override

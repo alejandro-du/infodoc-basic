@@ -1,13 +1,13 @@
 package infodoc.basic.activity;
 
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.UserGroup;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityListExecutorTemplate;
-import infodoc.core.ui.comun.InfodocTheme;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.Set;
 
@@ -27,7 +27,7 @@ public abstract class AbstractAssignUserGroups extends ActivityListExecutorTempl
 	}
 	
 	@Override
-	public ProcessInstanceForm createForm(ProcessInstance processInstance) {
+	public CaseForm createForm(Case caseDto) {
 		AbstractSelect select = createSelectField();
 		select.setWidth("100%");
 		select.setIcon(new ThemeResource(InfodocTheme.iconUserGroup));
@@ -37,8 +37,8 @@ public abstract class AbstractAssignUserGroups extends ActivityListExecutorTempl
 			select.addItem(userGroup);
 		}
 		
-		ProcessInstanceForm form = super.createForm(processInstance);
-		form.addField(processInstance, select);
+		CaseForm form = super.createForm(caseDto);
+		form.addField(caseDto, select);
 		
 		return form;
 	}
@@ -48,8 +48,8 @@ public abstract class AbstractAssignUserGroups extends ActivityListExecutorTempl
 	public abstract Set<UserGroup> getUserGroups(AbstractSelect select);
 
 	@Override
-	public void execute(ProcessInstanceForm form) {
-		Set<UserGroup> userGroups = getUserGroups((AbstractSelect) form.getField(form.getProcessInstance()));
+	public void execute(CaseForm form) {
+		Set<UserGroup> userGroups = getUserGroups((AbstractSelect) form.getField(form.getCase()));
 		
 		if(userGroups != null && !userGroups.isEmpty()) {
 			form.validate();
@@ -65,8 +65,8 @@ public abstract class AbstractAssignUserGroups extends ActivityListExecutorTempl
 				}
 			}
 			
-			ProcessInstance processInstance = InfodocContainerFactory.getProcessInstanceContainer().getEntity(form.getProcessInstance().getId());
-			InfodocContainerFactory.getProcessInstanceContainer().updateInstance(processInstance, form.getPropertyValues(), getNewActivityInstance(processInstance, form.getComments(), null, userGroups));
+			Case caseDto = InfodocContainerFactory.getCaseContainer().getEntity(form.getCase().getId());
+			InfodocContainerFactory.getCaseContainer().updateInstance(caseDto, form.getPropertyValues(), getNewActivityInstance(caseDto, form.getComments(), null, userGroups));
 			update();
 		}
 		

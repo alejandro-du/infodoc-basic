@@ -2,13 +2,13 @@ package infodoc.basic.component;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Case;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.ActivityInstance;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityExecutorHelper;
-import infodoc.core.ui.comun.InfodocTheme;
-import infodoc.core.ui.processinstance.ProcessInstanceBox;
+import infodoc.core.ui.cases.CaseBox;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class Dashboard extends CustomComponent {
 	private Accordion accordion = new Accordion();
 	private VerticalLayout myInstancesLayout = new VerticalLayout();
 	private VerticalLayout activityHistoryLayout = new VerticalLayout();
-	private OptionGroup processSelect;
+	private OptionGroup formSelect;
 
 	private User user;
 	private int numberOfLastActivities = BasicConstants.infodocBasicNumberOfLastActivities;
@@ -66,7 +66,7 @@ public class Dashboard extends CustomComponent {
 		accordion.setStyleName(InfodocTheme.ACCORDION_OPAQUE);
 		
 		if(user.getUserGroup().getAccessBasicModule()) {
-			accordion.addTab(myInstancesLayout, BasicConstants.uiMyProcessInstances);
+			accordion.addTab(myInstancesLayout, BasicConstants.uiMyCases);
 		}
 		
 		if(user.getUserGroup().getAccessLastActivityInstances()) {
@@ -79,10 +79,10 @@ public class Dashboard extends CustomComponent {
 			split.setFirstComponent(accordion);
 		}
 		
-		processSelect = new OptionGroup();
-		processSelect.setStyleName("horizontal");
-		processSelect.setImmediate(true);
-		processSelect.addListener(new ValueChangeListener() {
+		formSelect = new OptionGroup();
+		formSelect.setStyleName("horizontal");
+		formSelect.setImmediate(true);
+		formSelect.addListener(new ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void valueChange(ValueChangeEvent event) {
@@ -100,7 +100,7 @@ public class Dashboard extends CustomComponent {
 	}
 	
 	public void updateMyInstances() {
-		updateProcessFilter();
+		updateFormFilter();
 		
 		myInstancesLayout.removeAllComponents();
 		
@@ -119,45 +119,46 @@ public class Dashboard extends CustomComponent {
 		HorizontalLayout toolBarLayout = new HorizontalLayout();
 		toolBarLayout.setWidth("100%");
 		
-		toolBarLayout.addComponent(processSelect);
+		toolBarLayout.addComponent(formSelect);
 		toolBarLayout.addComponent(refreshButton);
 		toolBarLayout.setComponentAlignment(refreshButton, Alignment.TOP_RIGHT);
 		
 		myInstancesLayout.addComponent(toolBarLayout);
 		
-		List<Process> processes = InfodocContainerFactory.getProcessContainer().findByUserId(user.getId());
+		List<Form> forms = InfodocContainerFactory.getFormContainer().findByUserId(user.getId());
+		boolean instancesAdded = false;
 		
-		for(Process process : processes) {
-			List<ProcessInstance> instances = InfodocContainerFactory.getProcessInstanceContainer().findMyProcessInstances(user.getId(), process.getId());
+		for(Form form : forms) {
+			List<Case> instances = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId());
 			
-			if(instances.isEmpty()) {
-				myInstancesLayout.addComponent(new Label(BasicConstants.uiEmptyProcessInstancesList, Label.CONTENT_XHTML));
-			} else {
-				for(ProcessInstance instance : instances) {
-					addProcessInstance(instance);
-				}
+			for(Case instance : instances) {
+				instancesAdded = true;
+				addCase(instance);
 			}
 		}
 		
+		if(!instancesAdded) {
+			myInstancesLayout.addComponent(new Label(BasicConstants.uiEmptyCasesList, Label.CONTENT_XHTML));
+		}
 	}
 	
-	public void updateProcessFilter() {
-		List<Process> processes = InfodocContainerFactory.getProcessContainer().findByUserId(user.getId());
+	public void updateFormFilter() {
+		List<Form> forms = InfodocContainerFactory.getFormContainer().findByUserId(user.getId());
 		
-		if(processes.size() > 1) {
-			for(Process process : processes) {
-				int total = InfodocContainerFactory.getProcessInstanceContainer().findMyProcessInstances(user.getId(), process.getId()).size();
+		if(forms.size() > 1) {
+			for(Form form : forms) {
+				int total = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId()).size();
 
-				processSelect.addItem(process);
-				processSelect.setItemCaption(process, process.getName() + " (" + total + ")");
+				formSelect.addItem(form);
+				formSelect.setItemCaption(form, form.getName() + " (" + total + ")");
 			}
 		} else {
-			processSelect.setVisible(false);
+			formSelect.setVisible(false);
 		}
 	}
 	
-	public void addProcessInstance(final ProcessInstance instance) {
-		addActivityInstance(InfodocContainerFactory.getProcessInstanceContainer().getLastActivityInstance(instance), myInstancesLayout, false, true, false, true, true);
+	public void addCase(final Case instance) {
+		addActivityInstance(InfodocContainerFactory.getCaseContainer().getLastActivityInstance(instance), myInstancesLayout, false, true, false, true, true);
 	}
 	
 	public void updateActivityHistory(final int count) {
@@ -206,8 +207,8 @@ public class Dashboard extends CustomComponent {
 	}
 	
 	public void addActivityInstance(final ActivityInstance instance, Layout layout, boolean showUser, boolean showActions, boolean showActivity, boolean showDate, boolean bold) {
-		Button button = new Button(instance.getProcessInstance().toString());
-		button.setIcon(new ThemeResource(instance.getProcessInstance().getProcess().getIcon()));
+		Button button = new Button(instance.getCase().toString());
+		button.setIcon(new ThemeResource(instance.getCase().getForm().getIcon()));
 		
 		if(bold) {
 			button.setStyleName(InfodocTheme.BUTTON_LINK_BOLD);
@@ -220,7 +221,7 @@ public class Dashboard extends CustomComponent {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				showProcessInstance(instance.getProcessInstance());
+				showCase(instance.getCase());
 			}
 			
 		});
@@ -253,7 +254,7 @@ public class Dashboard extends CustomComponent {
 		if(showActions) {
 			Panel panel = new Panel();
 			panel.addComponent(activityInstanceLayout);
-			panel.addComponent(ActivityExecutorHelper.getAvailableActivitiesLayout(instance.getProcessInstance(), user));
+			panel.addComponent(ActivityExecutorHelper.getAvailableActivitiesLayout(instance.getCase(), user));
 			
 			layout.addComponent(panel);
 			
@@ -262,14 +263,14 @@ public class Dashboard extends CustomComponent {
 		}
 	}
 	
-	public void showProcessInstance(ProcessInstance instance) {
-		instance = InfodocContainerFactory.getProcessInstanceContainer().getEntity(instance.getId());
+	public void showCase(Case instance) {
+		instance = InfodocContainerFactory.getCaseContainer().getEntity(instance.getId());
 		
-		Window window = new Window(instance.getProcess().getName());
+		Window window = new Window(instance.getForm().getName());
 		window.setWidth("680px");
 		window.setHeight("480px");
 		window.setModal(true);
-		window.addComponent(new ProcessInstanceBox(instance));
+		window.addComponent(new CaseBox(instance));
 		
 		getApplication().getMainWindow().addWindow(window);
 	}

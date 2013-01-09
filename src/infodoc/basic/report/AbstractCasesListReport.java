@@ -2,13 +2,13 @@ package infodoc.basic.report;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.PropertyValueContainer;
-import infodoc.core.container.ProcessInstanceContainer;
+import infodoc.core.container.CaseContainer;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Property;
 import infodoc.core.dto.PropertyValue;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.ActivityInstance;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import enterpriseapp.Utils;
 
-public abstract class AbstractProcessInstancesListReport extends AbstractDateIntervalReport {
+public abstract class AbstractCasesListReport extends AbstractDateIntervalReport {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -43,11 +43,11 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 	public static final String LAST_ACTIVITY_NAME = "lastActivityName";
 	public static final String LAST_ACTIVITY_USER = "lastActivityUser";
 	
-	public AbstractProcessInstancesListReport(Process process, JavaReport report) {
-		super(process, report);
+	public AbstractCasesListReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 	
-	public abstract List<ProcessInstance> getProcessInstances();
+	public abstract List<Case> getCases();
 
 	@Override
 	public String[] getColumnProperties() {
@@ -61,8 +61,8 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 		names.add(LAST_ACTIVITY_NAME);
 		names.add(LAST_ACTIVITY_USER);
 		
-		if(process.getProperties() != null) {
-			for(Property property: process.getProperties()) {
+		if(form.getProperties() != null) {
+			for(Property property: form.getProperties()) {
 				if(!property.getDisabled()) {
 					names.add(PROPERTY + property.getId());
 				}
@@ -84,8 +84,8 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 		classes.add(String.class);
 		classes.add(String.class);
 		
-		if(process.getProperties() != null) {
-			for(Property property : process.getProperties()) {
+		if(form.getProperties() != null) {
+			for(Property property : form.getProperties()) {
 				if(!property.getDisabled()) {
 					classes.add(String.class);
 				}
@@ -99,7 +99,7 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 	public String[] getColumnTitles() {
 		ArrayList<String> titles = new ArrayList<String>();
 		
-		titles.add(BasicConstants.uiProcessNumber);
+		titles.add(BasicConstants.uiFormNumber);
 		titles.add(BasicConstants.uiDate + " " + BasicConstants.uiFirstActivityInstance.toLowerCase());
 		titles.add(BasicConstants.uiFirstActivityInstance);
 		titles.add(BasicConstants.uiUser + " " + BasicConstants.uiFirstActivityInstance.toLowerCase());
@@ -107,10 +107,10 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 		titles.add(BasicConstants.uiLastActivityInstance);
 		titles.add(BasicConstants.uiUser + " " + BasicConstants.uiLastActivityInstance.toLowerCase());
 		
-		process = InfodocContainerFactory.getProcessContainer().getEntity(process.getId());
+		form = InfodocContainerFactory.getFormContainer().getEntity(form.getId());
 		
-		if(process.getProperties() != null) {
-			for(Property property: process.getProperties()) {
+		if(form.getProperties() != null) {
+			for(Property property: form.getProperties()) {
 				if(!property.getDisabled()) {
 					titles.add(property.getName());
 				}
@@ -146,9 +146,9 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 		}
 		
 		ArrayList<DynaBean> data = new ArrayList<DynaBean>();
-		List<ProcessInstance> instances = getProcessInstances();
+		List<Case> instances = getCases();
 		
-		for(ProcessInstance instance : instances) {
+		for(Case instance : instances) {
 			data.add(getDynaBean(instance, propertiesArray));
 		}
 		
@@ -157,8 +157,8 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 	
 	@Override
 	public boolean getDefalutColumnCheckBox(String property) {
-		if(process.getProperties() != null) {
-			for(Property p: process.getProperties()) {
+		if(form.getProperties() != null) {
+			for(Property p: form.getProperties()) {
 				if(!p.getDisabled()) {
 					if(property.equals(PROPERTY + p.getId()) && !p.getShowInReports()) {
 						return false;
@@ -178,17 +178,17 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 		return reportBuilder;
 	}
 	
-	public DynaBean getDynaBean(ProcessInstance processInstance, DynaProperty[] properties) {
-		BasicDynaClass processInstanceClass = new BasicDynaClass("processInstance", BasicDynaBean.class, properties);
+	public DynaBean getDynaBean(Case caseDto, DynaProperty[] properties) {
+		BasicDynaClass caseDtoClass = new BasicDynaClass("caseDto", BasicDynaBean.class, properties);
 		DynaBean dynaBean = null;
 		
 		try {
-			ProcessInstanceContainer processInstanceContainer = InfodocContainerFactory.getProcessInstanceContainer();
-			ActivityInstance firstActivity = processInstanceContainer.getFisrtActivityInstance(processInstance);
-			ActivityInstance lastActivity = processInstanceContainer.getLastActivityInstance(processInstance);
-			dynaBean = processInstanceClass.newInstance();
+			CaseContainer caseDtoContainer = InfodocContainerFactory.getCaseContainer();
+			ActivityInstance firstActivity = caseDtoContainer.getFisrtActivityInstance(caseDto);
+			ActivityInstance lastActivity = caseDtoContainer.getLastActivityInstance(caseDto);
+			dynaBean = caseDtoClass.newInstance();
 			
-			dynaBean.set(NUMBER, processInstance.toString());
+			dynaBean.set(NUMBER, caseDto.toString());
 			
 			if(firstActivity != null) {
 				dynaBean.set(FIRST_ACTIVITY_EXECUTION_TIME, Utils.dateTimeToString(firstActivity.getExecutionTime()));
@@ -204,9 +204,9 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 			
 			PropertyValueContainer proprtyValueContainer = InfodocContainerFactory.getPropertyValueContainer();
 			
-			if(processInstance.getPropertyValues() != null) {
-				for(PropertyValue value: processInstance.getPropertyValues()) {
-					if(process.getProperties().contains(value.getProperty())) {
+			if(caseDto.getPropertyValues() != null) {
+				for(PropertyValue value: caseDto.getPropertyValues()) {
+					if(form.getProperties().contains(value.getProperty())) {
 						dynaBean.set(PROPERTY + value.getProperty().getId(), proprtyValueContainer.getStringValue(value));
 					}
 				}
@@ -224,8 +224,8 @@ public abstract class AbstractProcessInstancesListReport extends AbstractDateInt
 	public List<DynaProperty> getDynaProperties() {
 		ArrayList<DynaProperty> properties = new ArrayList<DynaProperty>();
 		
-		if(process.getProperties() != null) {
-			for(Property property: process.getProperties()) {
+		if(form.getProperties() != null) {
+			for(Property property: form.getProperties()) {
 				if(!property.getDisabled()) {
 					properties.add(new DynaProperty(PROPERTY + property.getId(), String.class));
 				}

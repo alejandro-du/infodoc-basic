@@ -14,8 +14,8 @@ import infodoc.basic.component.HqlReportViewer;
 import infodoc.basic.report.ActivityVolumeByUser;
 import infodoc.basic.report.ActivityVolumeByUserGroup;
 import infodoc.basic.report.CapacityReport;
-import infodoc.basic.report.FinalizedProcessesReport;
-import infodoc.basic.report.PendingProcessesReport;
+import infodoc.basic.report.FinalizedCasesReport;
+import infodoc.basic.report.PendingCasesReport;
 import infodoc.basic.report.PerformanceByUserGroupReport;
 import infodoc.basic.report.PerformanceByUserReport;
 import infodoc.basic.validator.Email;
@@ -27,19 +27,19 @@ import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.HqlReport;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityExecutorHelper;
 import infodoc.core.ui.auth.OptionsWindow;
 import infodoc.core.ui.auth.OptionsWindow.Listener;
-import infodoc.core.ui.comun.InfodocModule;
-import infodoc.core.ui.comun.InfodocReport;
-import infodoc.core.ui.comun.InfodocTheme;
+import infodoc.core.ui.cases.CaseSearchComponent;
+import infodoc.core.ui.common.InfodocModule;
+import infodoc.core.ui.common.InfodocReport;
+import infodoc.core.ui.common.InfodocTheme;
 import infodoc.core.ui.fieldfactory.ActivityFieldFactory;
 import infodoc.core.ui.fieldfactory.JavaReportFieldFactory;
 import infodoc.core.ui.fieldfactory.PropertyFieldFactory;
 import infodoc.core.ui.fieldfactory.ValidationFieldFactory;
-import infodoc.core.ui.processinstance.ProcessInstanceSearchComponent;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -95,7 +95,7 @@ public class BasicModule extends InfodocModule implements Command {
 	private MDIWindow mdiWindow;
 	private User user;
 	private Map<MenuItem, Activity> activityMap = new HashMap<MenuItem, Activity>();
-	private Map<MenuItem, Process> processMap = new HashMap<MenuItem, Process>();
+	private Map<MenuItem, Form> formMap = new HashMap<MenuItem, Form>();
 
 	@Override
 	public void init() {
@@ -113,16 +113,16 @@ public class BasicModule extends InfodocModule implements Command {
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.FileField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleClassificationField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.MultipleClassificationsField.class.getName());
-		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleProcessInstance.class.getName());
-		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.MultipleProcessInstances.class.getName());
-		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleAssignedByMeProcessInstanceField.class.getName());
-		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.MultipleAssignedByMeProcessInstancesField.class.getName());
+		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleCase.class.getName());
+		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.MultipleCases.class.getName());
+		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleCaseAssignedByMeField.class.getName());
+		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.MultipleCasesAssignedByMeField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleUserField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleUserGroupField.class.getName());
 		
 		JavaReportFieldFactory.getJavaClasses().add(CapacityReport.class.getName());
-		JavaReportFieldFactory.getJavaClasses().add(FinalizedProcessesReport.class.getName());
-		JavaReportFieldFactory.getJavaClasses().add(PendingProcessesReport.class.getName());
+		JavaReportFieldFactory.getJavaClasses().add(FinalizedCasesReport.class.getName());
+		JavaReportFieldFactory.getJavaClasses().add(PendingCasesReport.class.getName());
 		JavaReportFieldFactory.getJavaClasses().add(PerformanceByUserGroupReport.class.getName());
 		JavaReportFieldFactory.getJavaClasses().add(PerformanceByUserReport.class.getName());
 		JavaReportFieldFactory.getJavaClasses().add(ActivityVolumeByUserGroup.class.getName());
@@ -158,10 +158,10 @@ public class BasicModule extends InfodocModule implements Command {
 		this.mdiWindow = ventanaPrincipal;
 		this.user = (User) user;
 		
-		List<Process> processes = InfodocContainerFactory.getProcessContainer().findByDisabled(false);
+		List<Form> forms = InfodocContainerFactory.getFormContainer().findByDisabled(false);
 		
-		for(Process process : processes) {
-			addProcess(process);
+		for(Form form : forms) {
+			addForm(form);
 		}
 		
 		ventanaPrincipal.addWorkbenchContent(new Dashboard(), null, new ThemeResource(InfodocTheme.iconHome), false, false);
@@ -182,55 +182,55 @@ public class BasicModule extends InfodocModule implements Command {
 		mdiWindow.getWorkbenchAreaLayout().addComponent(toolbox);
 	}
 	
-	public void addProcess(final Process process) {
-		MenuItem processMenuItem = mdiWindow.getMenuBar().addItem(process.getName(), new ThemeResource(process.getIcon()), null);
-		List<Activity> activities = InfodocContainerFactory.getActivityContainer().findByUserIdAndProcessId(user.getId(), process.getId());
+	public void addForm(final Form form) {
+		MenuItem formMenuItem = mdiWindow.getMenuBar().addItem(form.getName(), new ThemeResource(form.getIcon()), null);
+		List<Activity> activities = InfodocContainerFactory.getActivityContainer().findByUserIdAndFormId(user.getId(), form.getId());
 		
 		if(activities != null && activities.size() > 0) {
 			for(Activity activity : activities) {
-				MenuItem menuItem = addMenuItem(processMenuItem, activity.getName(), ActivityExecutorHelper.getIcon(activity, user), this, true);
+				MenuItem menuItem = addMenuItem(formMenuItem, activity.getName(), ActivityExecutorHelper.getIcon(activity, user), this, true);
 				activityMap.put(menuItem, activity);
-				processMap.put(menuItem, process);
+				formMap.put(menuItem, form);
 			}
 		}
 		
-		addSeparator(processMenuItem);
-		addSearchOption(process, processMenuItem);
-		addReports(process, processMenuItem);
+		addSeparator(formMenuItem);
+		addSearchOption(form, formMenuItem);
+		addReports(form, formMenuItem);
 		
-		if(processMenuItem != null) {
-			if(!processMenuItem.hasChildren()) {
-				mdiWindow.getMenuBar().removeItem(processMenuItem);
+		if(formMenuItem != null) {
+			if(!formMenuItem.hasChildren()) {
+				mdiWindow.getMenuBar().removeItem(formMenuItem);
 			} else {
-				removeEndingSeparator(processMenuItem);
+				removeEndingSeparator(formMenuItem);
 			}
 		}
 	}
 
-	public void addSearchOption(final Process process, MenuItem menuItem) {
+	public void addSearchOption(final Form form, MenuItem menuItem) {
 		addMenuItem(menuItem, BasicConstants.uiSearch, new ThemeResource(InfodocTheme.iconSearch), new Command() {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				ProcessInstanceSearchComponent searchComponent = new ProcessInstanceSearchComponent(process, user);
+				CaseSearchComponent searchComponent = new CaseSearchComponent(form, user);
 				searchComponent.setSizeFull();
-				mdiWindow.addWorkbenchContent(searchComponent, BasicConstants.uiSearch + " (" + process.getName() + ")", null, true, false);
+				mdiWindow.addWorkbenchContent(searchComponent, BasicConstants.uiSearch + " (" + form.getName() + ")", null, true, false);
 			}
 			
-		}, user.getUserGroup().getAccessSearchProcess().contains(process));
+		}, user.getUserGroup().getAccessSearchForm().contains(form));
 	}
 	
-	public void addReports(final Process process, MenuItem menuItem) {
+	public void addReports(final Form form, MenuItem menuItem) {
 		MenuItem reportsMenuItem = addMenuItem(menuItem, BasicConstants.uiJavaReports, new ThemeResource(InfodocTheme.iconReports), null, user.getUserGroup().getJavaReports() != null && !user.getUserGroup().getJavaReports().isEmpty());
 		
 		if(reportsMenuItem != null) {
 			for(JavaReport report : user.getUserGroup().getJavaReports()) {
-				if(report.getProcess().equals(process)) {
+				if(report.getForm().equals(form)) {
 					try {
-						Constructor<?> constructor = Class.forName(report.getJavaClass()).getConstructor(Process.class, JavaReport.class);
-						InfodocReport component = (InfodocReport) constructor.newInstance(process, report);
-						addReport(reportsMenuItem, report.getName(), new ThemeResource(report.getIcon()), component, process, true);
+						Constructor<?> constructor = Class.forName(report.getJavaClass()).getConstructor(Form.class, JavaReport.class);
+						InfodocReport component = (InfodocReport) constructor.newInstance(form, report);
+						addReport(reportsMenuItem, report.getName(), new ThemeResource(report.getIcon()), component, form, true);
 						
 					} catch (Exception e) {
 						logger.error("Error creating java report " + report.getJavaClass(), e);
@@ -241,10 +241,10 @@ public class BasicModule extends InfodocModule implements Command {
 			
 			addSeparator(reportsMenuItem);
 			
-			List<HqlReport> hqlReports = InfodocContainerFactory.getHqlReportContainer().listByUserGroupIdAndProcessId(user.getUserGroup().getId(), process.getId());
+			List<HqlReport> hqlReports = InfodocContainerFactory.getHqlReportContainer().listByUserGroupIdAndFormId(user.getUserGroup().getId(), form.getId());
 			
 			for(HqlReport report : hqlReports) {
-				addReport(reportsMenuItem, report.getName(), new ThemeResource(InfodocTheme.iconReport), new HqlReportViewer(report), process, true);
+				addReport(reportsMenuItem, report.getName(), new ThemeResource(InfodocTheme.iconReport), new HqlReportViewer(report), form, true);
 			}
 			
 			if(reportsMenuItem.getChildren() == null || reportsMenuItem.getChildren().isEmpty()) {
@@ -255,14 +255,14 @@ public class BasicModule extends InfodocModule implements Command {
 		}
 	}
 
-	private void addReport(MenuItem menuItem, final String title, final Resource icon, final InfodocReport report, final Process process, boolean canUserAccess) {
+	private void addReport(MenuItem menuItem, final String title, final Resource icon, final InfodocReport report, final Form form, boolean canUserAccess) {
 		addMenuItem(menuItem, title, icon, new Command() {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				report.setSizeFull();
-				mdiWindow.addWorkbenchContent(report, title + " (" + process.getName() + ")", null, true, false);
+				mdiWindow.addWorkbenchContent(report, title + " (" + form.getName() + ")", null, true, false);
 			}
 			
 		}, canUserAccess);
@@ -271,12 +271,12 @@ public class BasicModule extends InfodocModule implements Command {
 	@Override
 	public void menuSelected(MenuItem selectedItem) {
 		Activity activity = activityMap.get(selectedItem);
-		Process process = processMap.get(selectedItem);
+		Form form = formMap.get(selectedItem);
 		
 		activity = InfodocContainerFactory.getActivityContainer().getEntity(activity.getId());
-		process = InfodocContainerFactory.getProcessContainer().getEntity(process.getId());
+		form = InfodocContainerFactory.getFormContainer().getEntity(form.getId());
 		
-		ActivityExecutorHelper.addExecuutorComponent(mdiWindow, activity, process, user);
+		ActivityExecutorHelper.addExecuutorComponent(mdiWindow, activity, form, user);
 	}
 
 }

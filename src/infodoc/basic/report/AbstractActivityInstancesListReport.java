@@ -3,7 +3,7 @@ package infodoc.basic.report;
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
 
 import java.util.ArrayList;
@@ -31,8 +31,8 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 	
 	public static final String ACTIVITY = "activity";
 
-	public AbstractActivityInstancesListReport(Process process, JavaReport report) {
-		super(process, report);
+	public AbstractActivityInstancesListReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 	
 	public abstract String getFirstColumnPropertyName();
@@ -113,8 +113,8 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 	public List<String> getActivityColumnsProperties() {
 		ArrayList<String> names = new ArrayList<String>();
 		
-		if(process.getActivities() != null) {
-			for(Activity activity : process.getActivities()) {
+		if(form.getActivities() != null) {
+			for(Activity activity : form.getActivities()) {
 				if(!activity.getDisabled()) {
 					names.add(ACTIVITY + activity.getId());
 				}
@@ -127,8 +127,8 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 	public List<Class<?>> getActivityColumnsClasses() {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		
-		if(process.getActivities() != null) {
-			for(Activity activity : process.getActivities()) {
+		if(form.getActivities() != null) {
+			for(Activity activity : form.getActivities()) {
 				if(!activity.getDisabled()) {
 					classes.add(Long.class);
 				}
@@ -140,10 +140,10 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 
 	public List<String> getActivityColumnsTitles() {
 		ArrayList<String> titles = new ArrayList<String>();
-		process = InfodocContainerFactory.getProcessContainer().getEntity(process.getId());
+		form = InfodocContainerFactory.getFormContainer().getEntity(form.getId());
 		
-		if(process.getActivities() != null) {
-			for(Activity activity : process.getActivities()) {
+		if(form.getActivities() != null) {
+			for(Activity activity : form.getActivities()) {
 				if(!activity.getDisabled()) {
 					titles.add(activity.getName());
 				}
@@ -157,8 +157,8 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 		ArrayList<DynaProperty> properties = new ArrayList<DynaProperty>();
 		properties.add(new DynaProperty(getFirstColumnPropertyName(), getFirstColumnPropertyClass()));
 		
-		if(process.getActivities() != null) {
-			for(Activity activity: process.getActivities()) {
+		if(form.getActivities() != null) {
+			for(Activity activity: form.getActivities()) {
 				if(!activity.getDisabled()) {
 					properties.add(new DynaProperty(ACTIVITY + activity.getId(), Long.class));
 				}
@@ -200,8 +200,8 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 			dynaBean = volumenClass.newInstance();
 			dynaBean.set(getFirstColumnPropertyName(), getFirstColumnValue(rowObject));
 			
-			if(process.getActivities() != null) {
-				for(Activity activity : process.getActivities()) {
+			if(form.getActivities() != null) {
+				for(Activity activity : form.getActivities()) {
 					Long count = getCount(rowObject, nextRowObject, activity.getId());
 					dynaBean.set(ACTIVITY + activity.getId(), count);
 				}

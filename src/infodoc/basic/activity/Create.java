@@ -2,14 +2,14 @@ package infodoc.basic.activity;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.UserGroup;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityExecutor;
-import infodoc.core.ui.comun.InfodocTheme;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
-import infodoc.core.ui.processinstance.ProcessInstancesList;
+import infodoc.core.ui.cases.CaseForm;
+import infodoc.core.ui.cases.CasesList;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.HashSet;
 
@@ -35,8 +35,8 @@ public class Create extends ActivityExecutor implements ClickListener {
 	private static final long serialVersionUID = 1L;
 	
 	private Button createButton;
-	private ProcessInstanceForm form;
-	private ProcessInstancesList instancesListComponent;
+	private CaseForm form;
+	private CasesList instancesListComponent;
 	private CheckBox sendToCheckBox;
 	
 	public Create() {
@@ -62,10 +62,10 @@ public class Create extends ActivityExecutor implements ClickListener {
 		footer.addComponent(createButton);
 		footer.setComponentAlignment(createButton, Alignment.BOTTOM_RIGHT);
 		
-		ProcessInstance newProcessInstance = new ProcessInstance();
-		newProcessInstance.setProcess(getProcess());
+		Case newCase = new Case();
+		newCase.setForm(getForm());
 		
-		form = new ProcessInstanceForm(newProcessInstance, getActivity(), getUser(), true);
+		form = new CaseForm(newCase, getActivity(), getUser(), true);
 		form.setImmediate(true);
 		form.setWidth("100%");
 		form.setFooter(footer);
@@ -78,7 +78,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 		leftLayout.setMargin(true);
 		leftLayout.addComponent(panel);
 		
-		instancesListComponent = new ProcessInstancesList();
+		instancesListComponent = new CasesList();
 		
 		VerticalLayout rightLayout = new VerticalLayout();
 		rightLayout.setMargin(true);
@@ -127,12 +127,12 @@ public class Create extends ActivityExecutor implements ClickListener {
 			
 			try {
 				form.validate();
-				ProcessInstance processInstance = saveProcessInstance();
+				Case caseDto = saveCase();
 				Db.commitTransaction();
-				processInstance = InfodocContainerFactory.getProcessInstanceContainer().getEntity(processInstance.getId());
+				caseDto = InfodocContainerFactory.getCaseContainer().getEntity(caseDto.getId());
 				form.clear();
 				addSendTo();
-				instancesListComponent.addAtBeginning(processInstance);
+				instancesListComponent.addAtBeginning(caseDto);
 				getWindow().showNotification(BasicConstants.uiActivityExecuted);
 				
 			} catch (InvalidValueException e) {
@@ -180,7 +180,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 		}
 	}
 
-	public ProcessInstance saveProcessInstance() {
+	public Case saveCase() {
 		HashSet<User> users = new HashSet<User>();
 		HashSet<UserGroup> userGroups = new HashSet<UserGroup>();
 		
@@ -200,11 +200,11 @@ public class Create extends ActivityExecutor implements ClickListener {
 			userGroups = null;
 		}
 		
-		return InfodocContainerFactory.getProcessInstanceContainer().saveInstace(form.getProcessInstance(), form.getPropertyValues(), getNewActivityInstance(form.getProcessInstance(), form.getComments(), users, userGroups));
+		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), form.getPropertyValues(), getNewActivityInstance(form.getCase(), form.getComments(), users, userGroups));
 	}
 	
 	@Override
-	public Long countAvailableProcessInstances() {
+	public Long countAvailableCases() {
 		return null;
 	}
 	

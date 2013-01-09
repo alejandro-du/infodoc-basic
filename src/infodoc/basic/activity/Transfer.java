@@ -1,13 +1,13 @@
 package infodoc.basic.activity;
 
 import infodoc.basic.BasicConstants;
-import infodoc.core.container.ProcessInstanceContainer;
+import infodoc.core.container.CaseContainer;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
-import infodoc.core.ui.comun.InfodocTheme;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,17 +33,17 @@ public class Transfer extends Update {
 	}
 
 	@Override
-	public void execute(ProcessInstanceForm form) {
+	public void execute(CaseForm form) {
 		form.validate();
-		ProcessInstanceContainer processInstanceContainer = InfodocContainerFactory.getProcessInstanceContainer();
+		CaseContainer caseDtoContainer = InfodocContainerFactory.getCaseContainer();
 		
-		List<ProcessInstance> instances = processInstanceContainer.findAvailableByUserIdAndNextActivityId(theOtherUser.getId(), getActivity().getId());
+		List<Case> instances = caseDtoContainer.findAvailableByUserIdAndNextActivityId(theOtherUser.getId(), getActivity().getId());
 		
-		if(instances.contains(form.getProcessInstance())) {
+		if(instances.contains(form.getCase())) {
 			HashSet<User> users = new HashSet<User>();
 			users.add(theOtherUser);
-			ProcessInstance processInstance = processInstanceContainer.getEntity(form.getProcessInstance().getId());
-			processInstanceContainer.updateInstance(processInstance, form.getPropertyValues(), getNewActivityInstance(processInstance, form.getComments(), users, null));
+			Case caseDto = caseDtoContainer.getEntity(form.getCase().getId());
+			caseDtoContainer.updateInstance(caseDto, form.getPropertyValues(), getNewActivityInstance(caseDto, form.getComments(), users, null));
 		} else {
 			throw new InvalidValueException(BasicConstants.uiErrorUserNotAllowedToExecuteActivity);
 		}
@@ -52,8 +52,8 @@ public class Transfer extends Update {
 	}
 	
 	@Override
-	public List<ProcessInstance> getProcessInstances() {
-		return InfodocContainerFactory.getProcessInstanceContainer().findAssignedToOtherUserByUserIdAndNextActivityId(getUser().getId(), getActivity().getId());
+	public List<Case> getCases() {
+		return InfodocContainerFactory.getCaseContainer().findAssignedToOtherUserByUserIdAndNextActivityId(getUser().getId(), getActivity().getId());
 	}
 	
 	@Override
@@ -62,11 +62,11 @@ public class Transfer extends Update {
 	}
 	
 	@Override
-	public void executeForOneInstance(ProcessInstanceForm form) {
+	public void executeForOneInstance(CaseForm form) {
 		showAuthWindow(form);
 	}
 
-	public void showAuthWindow(final ProcessInstanceForm form) {
+	public void showAuthWindow(final CaseForm form) {
 		
 		getWindow().addWindow(new AuthWindow(getActivity().getName(), getActivity().getName(), BasicConstants.uiUserLogin, BasicConstants.uiUserPassword, BasicConstants.uiDefaultLogin, BasicConstants.uiDefaultPassword) {
 			private static final long serialVersionUID = 1L;
@@ -97,7 +97,7 @@ public class Transfer extends Update {
 		super.executeForAllInstances();
 	}
 	
-	public void runExecuteForInstanceMethod(ProcessInstanceForm form) {
+	public void runExecuteForInstanceMethod(CaseForm form) {
 		super.executeForInstace(form);
 	}
 	
@@ -108,7 +108,7 @@ public class Transfer extends Update {
 
 	@Override
 	public Resource getIcon() {
-		return new ThemeResource(InfodocTheme.iconActivityProcessAssignedWithOtherUser);
+		return new ThemeResource(InfodocTheme.iconActivityFormAssignedWithOtherUser);
 	}
 
 }

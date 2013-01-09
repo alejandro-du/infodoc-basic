@@ -12,20 +12,20 @@ public class BasicConstants extends InfodocConstants {
 	public static final String uiAutomaticallyExecutedActivity = Utils.getProperty("ui.automaticallyExecutedActivity");
 	public static final String uiAssignTo(String destinos) { return Utils.getProperty("ui.assignTo", new String[] {destinos}); }
 	public static final String uiEmptySummary = Utils.getProperty("ui.emptySummary");
-	public static final String uiEmptyProcessInstancesList = Utils.getProperty("ui.emptyProcessInstancesList");
+	public static final String uiEmptyCasesList = Utils.getProperty("ui.emptyCasesList");
 	public static final String uiEmptyActivitiesList = Utils.getProperty("ui.emptyActivitiesList");
 	public static final String uiSeeMore = Utils.getProperty("ui.seeMore", "");
-	public static final String uiMyProcessInstances = Utils.getProperty("ui.myProcessInstances");
+	public static final String uiMyCases = Utils.getProperty("ui.myCases");
 	
 	public static final String uiHelpFileField = Utils.getProperty("ui.help.fileField");
 	public static final String uiHelpTextAreaField = Utils.getProperty("ui.help.textAreaField");
 	public static final String uiHelpBooleanField = Utils.getProperty("ui.help.booleanField");
 	public static final String uiHelpMultipleClassificationsField = Utils.getProperty("ui.help.multipleClassificationsField");
 	public static final String uiHelpSingleClassificationField = Utils.getProperty("ui.help.singleClassificationField");
-	public static final String uiHelpSingleAssignedByMeProcessInstanceField = Utils.getProperty("ui.help.singleAssignedByMeProcessInstanceField");
-	public static final String uiHelpMultipleAssignedByMeProcessInstancesField = Utils.getProperty("ui.help.multipleAssignedByMeProcessInstancesField");
-	public static final String uiHelpMultipleProcessInstancesField = Utils.getProperty("ui.help.multipleProcessInstancesField");
-	public static final String uiHelpSingleProcessInstanceField = Utils.getProperty("ui.help.singleProcessInstanceField");
+	public static final String uiHelpSingleAssignedByMeCaseField = Utils.getProperty("ui.help.singleAssignedByMeCaseField");
+	public static final String uiHelpMultipleAssignedByMeCasesField = Utils.getProperty("ui.help.multipleAssignedByMeCasesField");
+	public static final String uiHelpMultipleCasesField = Utils.getProperty("ui.help.multipleCasesField");
+	public static final String uiHelpSingleCaseField = Utils.getProperty("ui.help.singleCaseField");
 	public static final String uiHelpDateField = Utils.getProperty("ui.help.dateField");
 	public static final String uiHelpSingleUserGroupField = Utils.getProperty("ui.help.singleUserGroupField");
 	public static final String uiHelpTextField = Utils.getProperty("ui.help.textField");

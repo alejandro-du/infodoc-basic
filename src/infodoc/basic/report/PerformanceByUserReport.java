@@ -4,7 +4,7 @@ import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.container.ActivityInstanceContainer;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.User;
 
 import java.util.Collection;
@@ -23,8 +23,8 @@ public class PerformanceByUserReport extends AbstractActivityInstancesListReport
 
 	private Select dateResolutionSelect = new Select(BasicConstants.uiDateResolution);
 
-	public PerformanceByUserReport(Process process, JavaReport report) {
-		super(process, report);
+	public PerformanceByUserReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 
 	@Override

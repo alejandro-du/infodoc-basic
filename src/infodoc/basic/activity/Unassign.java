@@ -2,10 +2,10 @@ package infodoc.basic.activity;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
-import infodoc.core.ui.comun.InfodocTheme;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.List;
 
@@ -25,8 +25,8 @@ public class Unassign extends Update {
 	}
 
 	@Override
-	public List<ProcessInstance> getProcessInstances() {
-		return InfodocContainerFactory.getProcessInstanceContainer().findAssignedToOtherUserByUserIdAndNextActivityId(getUser().getId(), getActivity().getId());
+	public List<Case> getCases() {
+		return InfodocContainerFactory.getCaseContainer().findAssignedToOtherUserByUserIdAndNextActivityId(getUser().getId(), getActivity().getId());
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class Unassign extends Update {
 
 	@Override
 	public Resource getIcon() {
-		return new ThemeResource(InfodocTheme.iconActivityProcessAssgigned);
+		return new ThemeResource(InfodocTheme.iconActivityFormAssgigned);
 	}
 
 }

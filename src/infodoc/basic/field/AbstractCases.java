@@ -1,18 +1,18 @@
 package infodoc.basic.field;
 
 import infodoc.basic.BasicConstants;
-import infodoc.core.container.ProcessInstanceContainer;
+import infodoc.core.container.CaseContainer;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.Property;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
 import infodoc.core.field.FieldFactory;
 import infodoc.core.field.FieldType;
 import infodoc.core.ui.activity.ActivityExecutor;
 import infodoc.core.ui.activity.ActivityExecutorHelper;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,11 +26,11 @@ import com.vaadin.ui.Window.Notification;
 
 import enterpriseapp.EnterpriseApplication;
 
-public abstract class AbstractProcessInstances implements FieldFactory {
+public abstract class AbstractCases implements FieldFactory {
 
 	public abstract AbstractSelect getField();
 	
-	public abstract List<ProcessInstance> getProcessInstances(ProcessInstanceContainer processInstanceContainer, User user, Long activityId);
+	public abstract List<Case> getCases(CaseContainer caseDtoContainer, User user, Long activityId);
 	
 	@Override
 	public FieldType getType() {
@@ -38,34 +38,34 @@ public abstract class AbstractProcessInstances implements FieldFactory {
 	}
 	
 	@Override
-	public Field getField(Property property, ProcessInstanceForm form, Activity activity, Process process, final Application application) {
+	public Field getField(Property property, CaseForm form, Activity activity, Form formDto, final Application application) {
 		final AbstractSelect select = getField();
 		
 		if(property.getParameter() != null && !property.getParameter().trim().isEmpty()) {
-			ProcessInstanceContainer processInstanceContainer = InfodocContainerFactory.getProcessInstanceContainer();
+			CaseContainer caseDtoContainer = InfodocContainerFactory.getCaseContainer();
 			User user = (User) application.getUser();
 			String[] params = property.getParameter().split(",");
-			Boolean processInstancesInActivities = null;
+			Boolean caseDtosInActivities = null;
 			
 			for(int i = 0; i < params.length; i++) {
 				final String param = params[i].trim();
 				
-				if(param.equals("processInstancesInActivities")) {
-					processInstancesInActivities = true;
+				if(param.equals("casesInActivities")) {
+					caseDtosInActivities = true;
 					
 				} else if(param.equals("automaticallyExecuteActivity")) {
-					processInstancesInActivities = false;
+					caseDtosInActivities = false;
 					
 				} else {
-					if(processInstancesInActivities == null) {
+					if(caseDtosInActivities == null) {
 						EnterpriseApplication.getInstance().getMainWindow().showNotification(BasicConstants.uiErrorIncorrectParam(property.toString()), Notification.TYPE_ERROR_MESSAGE);
 						throw new RuntimeException("Incorrect parameter value (property: " + property + ", parameter: " + property.getParameter() + ")");
 					}
 					
-					if(processInstancesInActivities) {
-						List<ProcessInstance> instances = getProcessInstances(processInstanceContainer, user, Long.parseLong(param.trim()));
+					if(caseDtosInActivities) {
+						List<Case> instances = getCases(caseDtoContainer, user, Long.parseLong(param.trim()));
 						
-						for(ProcessInstance instance : instances) {
+						for(Case instance : instances) {
 							if(select.getItem(instance) == null) {
 								select.addItem(instance);
 							}
@@ -97,26 +97,26 @@ public abstract class AbstractProcessInstances implements FieldFactory {
 		}
 		
 		if(select.isMultiSelect()) {
-			Collection<?> processInstances = (Collection<?>) select.getValue();
+			Collection<?> caseDtos = (Collection<?>) select.getValue();
 			
-			for(Object instance : processInstances) {
-				executeActivity((ProcessInstance) instance, activityId, user);
+			for(Object instance : caseDtos) {
+				executeActivity((Case) instance, activityId, user);
 			}
 			
 		} else {
-			executeActivity((ProcessInstance) select.getValue(), activityId, user);
+			executeActivity((Case) select.getValue(), activityId, user);
 		}
 	}
 	
-	public void executeActivity(ProcessInstance processInstance, Long activityId, User user) {
+	public void executeActivity(Case caseDto, Long activityId, User user) {
 		Activity activity = InfodocContainerFactory.getActivityContainer().getEntity(activityId);
 		ActivityExecutor executor = ActivityExecutorHelper.getActivityExecutorComponent(activity, user);
-		InfodocContainerFactory.getProcessInstanceContainer().updateInstance(processInstance, null, executor.getNewActivityInstance(processInstance, BasicConstants.uiAutomaticallyExecutedActivity, null, null));
+		InfodocContainerFactory.getCaseContainer().updateInstance(caseDto, null, executor.getNewActivityInstance(caseDto, BasicConstants.uiAutomaticallyExecutedActivity, null, null));
 	}
 
 	@Override
-	public Field getSearchField(Property property, ProcessInstanceForm form, Activity activity, Process process, Application application) {
-		return getField(property, form, activity, process, application);
+	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
+		return getField(property, form, activity, formDto, application);
 	}
 	
 }

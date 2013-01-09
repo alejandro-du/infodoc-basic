@@ -2,11 +2,11 @@ package infodoc.basic.field;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.dto.Property;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
 import infodoc.core.field.FieldFactory;
 import infodoc.core.field.FieldType;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
 
 import com.vaadin.Application;
 import com.vaadin.ui.Field;
@@ -22,7 +22,7 @@ public class FileField implements FieldFactory {
 	}
 	
 	@Override
-	public Field getField(final Property property, ProcessInstanceForm form, Activity activity, Process process, Application application) {
+	public Field getField(final Property property, CaseForm form, Activity activity, Form formDto, Application application) {
 		DownloadField field = new DownloadField(application) {
 			private static final long serialVersionUID = 1L;
 			
@@ -39,8 +39,8 @@ public class FileField implements FieldFactory {
 	}
 
 	@Override
-	public Field getSearchField(Property property, ProcessInstanceForm form, Activity activity, Process process, Application application) {
-		return getField(property, form, activity, process, application);
+	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
+		return getField(property, form, activity, formDto, application);
 	}
 
 	@Override

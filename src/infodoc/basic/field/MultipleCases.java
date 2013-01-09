@@ -1,8 +1,8 @@
 package infodoc.basic.field;
 
 import infodoc.basic.BasicConstants;
-import infodoc.core.container.ProcessInstanceContainer;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.container.CaseContainer;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.User;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.ListSelect;
 
-public class MultipleProcessInstances extends AbstractProcessInstances {
+public class MultipleCases extends AbstractCases {
 
 	@Override
 	public AbstractSelect getField() {
@@ -21,13 +21,13 @@ public class MultipleProcessInstances extends AbstractProcessInstances {
 	}
 
 	@Override
-	public List<ProcessInstance> getProcessInstances(ProcessInstanceContainer processContainer, User user, Long activityId) {
-		return processContainer.findByActivityId(activityId);
+	public List<Case> getCases(CaseContainer formContainer, User user, Long activityId) {
+		return formContainer.findByActivityId(activityId);
 	}
 	
 	@Override
 	public String getHelp() {
-		return BasicConstants.uiHelpMultipleProcessInstancesField;
+		return BasicConstants.uiHelpMultipleCasesField;
 	}
 
 }

@@ -3,7 +3,7 @@ package infodoc.basic.report;
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -34,8 +34,8 @@ public class CapacityReport extends AbstractActivityInstancesListReport {
 	
 	private Select dateResolutionSelect = new Select(BasicConstants.uiDateResolution);
 
-	public CapacityReport(Process process, JavaReport report) {
-		super(process, report);
+	public CapacityReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 	
 	@Override
@@ -55,7 +55,7 @@ public class CapacityReport extends AbstractActivityInstancesListReport {
 
 	@Override
 	public Collection<?> getRowObjects() {
-		List<Date> dates = InfodocContainerFactory.getActivityInstanceContainer().findDatesHavingActivityInstances(process.getId(), (Date) fromDateField.getValue(), (Date) toDateField.getValue());
+		List<Date> dates = InfodocContainerFactory.getActivityInstanceContainer().findDatesHavingActivityInstances(form.getId(), (Date) fromDateField.getValue(), (Date) toDateField.getValue());
 		LinkedHashSet<Date> rowObjects = new LinkedHashSet<Date>();
 		int resolution = (Integer) dateResolutionSelect.getValue();
 		

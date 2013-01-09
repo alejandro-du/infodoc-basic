@@ -2,12 +2,12 @@ package infodoc.basic.component;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityExecutor;
 import infodoc.core.ui.activity.ActivityExecutorHelper;
-import infodoc.core.ui.comun.InfodocTheme;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.List;
 
@@ -57,12 +57,12 @@ public class SummaryComponent extends CustomComponent implements ClickListener {
 		updateSummary();
 	}
 	
-	public boolean addActivity(final Activity activity, final Process process) {
+	public boolean addActivity(final Activity activity, final Form form) {
 		boolean activityAdded = false;
 		
 		final User user = (User) getApplication().getUser();
 		ActivityExecutor executorComponent = ActivityExecutorHelper.getActivityExecutorComponent(activity, user);
-		Long count = executorComponent.countAvailableProcessInstances();
+		Long count = executorComponent.countAvailableCases();
 		
 		if(count != null) {
 			String countStyle = "";
@@ -83,7 +83,7 @@ public class SummaryComponent extends CustomComponent implements ClickListener {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(ClickEvent event) {
-					ActivityExecutorHelper.addExecuutorComponent((MDIWindow) getApplication().getMainWindow(), activity, process, user);
+					ActivityExecutorHelper.addExecuutorComponent((MDIWindow) getApplication().getMainWindow(), activity, form, user);
 				}
 			});
 			
@@ -103,40 +103,40 @@ public class SummaryComponent extends CustomComponent implements ClickListener {
 		return activityAdded;
 	}
 
-	public boolean addProcess(Process process) {
-		Label name = new Label(process.getName());
+	public boolean addForm(Form form) {
+		Label name = new Label(form.getName());
 		name.addStyleName(InfodocTheme.LABEL_H3);
 		name.addStyleName(InfodocTheme.LABEL_COLOR);
 		summaryLayout.addComponent(name);
-		boolean processAdded = false;
+		boolean formAdded = false;
 		
-		if(process.getActivities() != null) {
+		if(form.getActivities() != null) {
 			User user = (User) getApplication().getUser();
 			user = InfodocContainerFactory.getUserContainer().getEntity(user.getId());
 			
-			for(Activity activity : process.getActivities()) {
+			for(Activity activity : form.getActivities()) {
 				if(user.getUserGroup().getActivities().contains(activity)) {
-					if(addActivity(activity, process)) {
-						processAdded = true;
+					if(addActivity(activity, form)) {
+						formAdded = true;
 					}
 				}
 			}
 		}
 		
-		if(!processAdded) {
+		if(!formAdded) {
 			summaryLayout.removeComponent(name);
 		}
 		
-		return processAdded;
+		return formAdded;
 	}
 	
 	public void updateSummary() {
 		summaryLayout.removeAllComponents();
-		List<Process> processes = InfodocContainerFactory.getProcessContainer().findByDisabled(false);
+		List<Form> forms = InfodocContainerFactory.getFormContainer().findByDisabled(false);
 		boolean emptySummary = true;
 		
-		for(Process process : processes) {
-			if(addProcess(process)) {
+		for(Form form : forms) {
+			if(addForm(form)) {
 				emptySummary = false;
 			}
 		}

@@ -3,7 +3,7 @@ package infodoc.basic.activity;
 import infodoc.basic.BasicConstants;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
-import infodoc.core.ui.comun.InfodocTheme;
+import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.HashSet;
 import java.util.Set;

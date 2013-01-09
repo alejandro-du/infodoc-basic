@@ -4,11 +4,11 @@ import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Property;
 import infodoc.core.dto.UserGroup;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
 import infodoc.core.field.FieldFactory;
 import infodoc.core.field.FieldType;
-import infodoc.core.ui.processinstance.ProcessInstanceForm;
+import infodoc.core.ui.cases.CaseForm;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class SingleUserGroupField implements FieldFactory {
 	}
 	
 	@Override
-	public Field getField(Property property, ProcessInstanceForm form, Activity activity, Process process, Application application) {
+	public Field getField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
 		Select field = new Select();
 		List<UserGroup> userGroups = InfodocContainerFactory.getUserGroupContainer().listAll();
 		
@@ -36,8 +36,8 @@ public class SingleUserGroupField implements FieldFactory {
 	}
 
 	@Override
-	public Field getSearchField(Property property, ProcessInstanceForm form, Activity activity, Process process, Application application) {
-		return getField(property, form, activity, process, application);
+	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
+		return getField(property, form, activity, formDto, application);
 	}
 
 	@Override

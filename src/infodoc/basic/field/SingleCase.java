@@ -1,8 +1,8 @@
 package infodoc.basic.field;
 
 import infodoc.basic.BasicConstants;
-import infodoc.core.container.ProcessInstanceContainer;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.container.CaseContainer;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.User;
 
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Select;
 
-public class SingleProcessInstance extends AbstractProcessInstances {
+public class SingleCase extends AbstractCases {
 	
 	@Override
 	public AbstractSelect getField() {
@@ -23,23 +23,23 @@ public class SingleProcessInstance extends AbstractProcessInstances {
 			@Override
 			public Object getValue() {
 				Object value = super.getValue();
-				Set<ProcessInstance> processInstances = null;
+				Set<Case> caseDtos = null;
 				
 				if(value != null) {
-					processInstances = new HashSet<ProcessInstance>();
-					processInstances.add((ProcessInstance) value);
+					caseDtos = new HashSet<Case>();
+					caseDtos.add((Case) value);
 				}
 				
-				return processInstances;
+				return caseDtos;
 			}
 			
 			@Override
 			@SuppressWarnings("unchecked")
 			public void setValue(Object newValue) {
-				Set<ProcessInstance> processInstances = (Set<ProcessInstance>) newValue;
+				Set<Case> caseDtos = (Set<Case>) newValue;
 				
-				if(processInstances != null && !processInstances.isEmpty()) {
-					super.setValue(processInstances.toArray()[0]);
+				if(caseDtos != null && !caseDtos.isEmpty()) {
+					super.setValue(caseDtos.toArray()[0]);
 				} else {
 					super.setValue(null);
 				}
@@ -54,13 +54,13 @@ public class SingleProcessInstance extends AbstractProcessInstances {
 	}
 	
 	@Override
-	public List<ProcessInstance> getProcessInstances(ProcessInstanceContainer processInstanceContainer, User user, Long activityId) {
-		return processInstanceContainer.findByActivityId(activityId);
+	public List<Case> getCases(CaseContainer caseDtoContainer, User user, Long activityId) {
+		return caseDtoContainer.findByActivityId(activityId);
 	}
 	
 	@Override
 	public String getHelp() {
-		return BasicConstants.uiHelpSingleProcessInstanceField;
+		return BasicConstants.uiHelpSingleCaseField;
 	}
 
 }

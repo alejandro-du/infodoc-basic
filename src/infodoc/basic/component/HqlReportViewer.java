@@ -4,7 +4,7 @@ import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.HqlReport;
 import infodoc.core.dto.HqlReportParameter;
 import infodoc.core.dto.User;
-import infodoc.core.ui.comun.InfodocReport;
+import infodoc.core.ui.common.InfodocReport;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class HqlReportViewer extends InfodocReport {
 	private Map<HqlReportParameter, Field> paramsFields = new HashMap<HqlReportParameter, Field>();
 	
 	public HqlReportViewer(HqlReport report) {
-		super(report.getProcess(), null);
+		super(report.getForm(), null);
 		this.report = report;
 		Db.beginTransaction();
 
@@ -126,7 +126,7 @@ public class HqlReportViewer extends InfodocReport {
 
 	private String getParsedQuery(String query) {
 		return query
-			.replace("${processId}", "" + report.getProcess().getId())
+			.replace("${formId}", "" + report.getForm().getId())
 			.replace("${userId}", "" + ((User) EnterpriseApplication.getInstance().getUser()).getId());
 	}
 

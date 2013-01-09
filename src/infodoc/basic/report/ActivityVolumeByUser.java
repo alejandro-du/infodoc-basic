@@ -4,7 +4,7 @@ import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.container.ActivityInstanceContainer;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 import infodoc.core.dto.User;
 
 import java.util.Collection;
@@ -14,8 +14,8 @@ public class ActivityVolumeByUser extends AbstractActivityInstancesListReport {
 
 	private static final long serialVersionUID = 1L;
 	
-	public ActivityVolumeByUser(Process process, JavaReport report) {
-		super(process, report);
+	public ActivityVolumeByUser(Form form, JavaReport report) {
+		super(form, report);
 	}
 
 	@Override

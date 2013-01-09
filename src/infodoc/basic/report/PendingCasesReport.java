@@ -1,19 +1,19 @@
 package infodoc.basic.report;
 
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.ProcessInstance;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.JavaReport;
-import infodoc.core.dto.Process;
+import infodoc.core.dto.Form;
 
 import java.util.Date;
 import java.util.List;
 
-public class PendingProcessesReport extends AbstractProcessInstancesListReport {
+public class PendingCasesReport extends AbstractCasesListReport {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public PendingProcessesReport(Process process, JavaReport report) {
-		super(process, report);
+	public PendingCasesReport(Form form, JavaReport report) {
+		super(form, report);
 	}
 	
 	@Override
@@ -28,8 +28,8 @@ public class PendingProcessesReport extends AbstractProcessInstancesListReport {
 		return super.getDefalutColumnCheckBox(property);
 	}
 	
-	public List<ProcessInstance> getProcessInstances() {
-		return InfodocContainerFactory.getProcessInstanceContainer().findPendingByProcessId(process.getId(), (Date) fromDateField.getValue(), (Date) toDateField.getValue());
+	public List<Case> getCases() {
+		return InfodocContainerFactory.getCaseContainer().findPendingByFormId(form.getId(), (Date) fromDateField.getValue(), (Date) toDateField.getValue());
 	}
 	
 }
