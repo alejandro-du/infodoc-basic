@@ -36,7 +36,7 @@ public class Unassign extends Update {
 
 	@Override
 	public Resource getIcon() {
-		return new ThemeResource(InfodocTheme.iconActivityFormAssgigned);
+		return new ThemeResource(InfodocTheme.iconActivityUnassign);
 	}
 
 }

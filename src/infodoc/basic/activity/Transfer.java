@@ -108,7 +108,7 @@ public class Transfer extends Update {
 
 	@Override
 	public Resource getIcon() {
-		return new ThemeResource(InfodocTheme.iconActivityFormAssignedWithOtherUser);
+		return new ThemeResource(InfodocTheme.iconActivityTransfer);
 	}
 
 }

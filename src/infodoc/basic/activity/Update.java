@@ -43,7 +43,7 @@ public class Update extends ActivityListExecutorTemplate {
 
 	@Override
 	public Resource getIcon() {
-		return new ThemeResource(InfodocTheme.iconActivityForm);
+		return new ThemeResource(InfodocTheme.iconActivityUpdate);
 	}
 
 }
