@@ -129,11 +129,13 @@ public class Dashboard extends CustomComponent {
 		boolean instancesAdded = false;
 		
 		for(Form form : forms) {
-			List<Case> instances = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId());
-			
-			for(Case instance : instances) {
-				instancesAdded = true;
-				addCase(instance);
+			if(formSelect.getValue() == null || formSelect.getValue().equals(form)) {
+				List<Case> instances = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId());
+				
+				for(Case instance : instances) {
+					instancesAdded = true;
+					addCase(instance);
+				}
 			}
 		}
 		
@@ -145,15 +147,11 @@ public class Dashboard extends CustomComponent {
 	public void updateFormFilter() {
 		List<Form> forms = InfodocContainerFactory.getFormContainer().findByUserId(user.getId());
 		
-		if(forms.size() > 1) {
-			for(Form form : forms) {
-				int total = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId()).size();
+		for(Form form : forms) {
+			int total = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId()).size();
 
-				formSelect.addItem(form);
-				formSelect.setItemCaption(form, form.getName() + " (" + total + ")");
-			}
-		} else {
-			formSelect.setVisible(false);
+			formSelect.addItem(form);
+			formSelect.setItemCaption(form, form.getName() + " (" + total + ")");
 		}
 	}
 	
