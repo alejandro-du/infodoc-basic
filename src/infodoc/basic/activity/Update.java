@@ -30,7 +30,12 @@ public class Update extends ActivityListExecutorTemplate {
 	public void execute(CaseForm form) {
 		form.validate();
 		HashSet<User> users = new HashSet<User>();
-		users.add(getUser());
+		String parameter = form.getActivity().getParameter();
+		
+		if(parameter == null || !parameter.toLowerCase().equals("dontAssign".toLowerCase())) {
+			users.add(getUser());
+		}
+		
 		Case caseDto = InfodocContainerFactory.getCaseContainer().getEntity(form.getCase().getId());
 		InfodocContainerFactory.getCaseContainer().updateInstance(caseDto, form.getPropertyValues(), getNewActivityInstance(caseDto, form.getComments(), users, null));
 		update();

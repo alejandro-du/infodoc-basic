@@ -143,20 +143,37 @@ public class Create extends ActivityExecutor implements ClickListener {
 	
 	public void parseParams(String parameter, HashSet<User> users, HashSet<UserGroup> userGroups) {
 		String[] params = parameter.split(",");
-		Boolean assignUserGroups = null;
+		Boolean assignUsers = false;
+		Boolean assignUserGroups = false;
+		Boolean dontAssign = false;
 		
 		for(int i = 0; i < params.length; i++) {
 			String param = params[i].trim();
 			
 			if(param.toLowerCase().equals("assignUsers".toLowerCase())) {
+				assignUsers = true;
 				assignUserGroups = false;
+				dontAssign = false;
 				
 			} else if(param.toLowerCase().equals("assignGroups".toLowerCase())) {
 				assignUserGroups = true;
+				assignUsers = false;
+				dontAssign = false;
+				
+			} else if(param.toLowerCase().equals("dontAssign".toLowerCase())) {
+				dontAssign = true;
+				assignUsers = false;
+				assignUserGroups = false;
 				
 			} else {
-				if(assignUserGroups == null) {
-					throw new RuntimeException("Wrong parameter for activity " + getActivity().toString() + ": " + parameter);
+				if(assignUsers) {
+					User u = InfodocContainerFactory.getUserContainer().getEntity(new Long(param));
+					
+					if(u == null) {
+						throw new RuntimeException("User " + getActivity().getParameter() + ", configured in parameter of activity " + getActivity() + ", does not exist.");
+					}
+					
+					users.add(u);
 					
 				} else if(assignUserGroups) {
 					UserGroup g = InfodocContainerFactory.getUserGroupContainer().getEntity(new Long(param));
@@ -167,14 +184,10 @@ public class Create extends ActivityExecutor implements ClickListener {
 					
 					userGroups.add(g);
 					
+				} else if(dontAssign && users.isEmpty() && userGroups.isEmpty()) {
+					
 				} else {
-					User u = InfodocContainerFactory.getUserContainer().getEntity(new Long(param));
-					
-					if(u == null) {
-						throw new RuntimeException("User " + getActivity().getParameter() + ", configured in parameter of activity " + getActivity() + ", does not exist.");
-					}
-					
-					users.add(u);
+					throw new RuntimeException("Wrong parameter for activity " + getActivity().toString() + ": " + parameter);
 				}
 			}
 		}

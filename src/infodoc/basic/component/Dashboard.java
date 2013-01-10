@@ -205,8 +205,8 @@ public class Dashboard extends CustomComponent {
 	}
 	
 	public void addActivityInstance(final ActivityInstance instance, Layout layout, boolean showUser, boolean showActions, boolean showActivity, boolean showDate, boolean bold) {
-		Button button = new Button(instance.getCase().toString());
-		button.setIcon(new ThemeResource(instance.getCase().getForm().getIcon()));
+		Button button = new Button(instance.getCaseDto().toString());
+		button.setIcon(new ThemeResource(instance.getCaseDto().getForm().getIcon()));
 		
 		if(bold) {
 			button.setStyleName(InfodocTheme.BUTTON_LINK_BOLD);
@@ -219,7 +219,7 @@ public class Dashboard extends CustomComponent {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				showCase(instance.getCase());
+				showCase(instance.getCaseDto());
 			}
 			
 		});
@@ -252,7 +252,7 @@ public class Dashboard extends CustomComponent {
 		if(showActions) {
 			Panel panel = new Panel();
 			panel.addComponent(activityInstanceLayout);
-			panel.addComponent(ActivityExecutorHelper.getAvailableActivitiesLayout(instance.getCase(), user));
+			panel.addComponent(ActivityExecutorHelper.getAvailableActivitiesLayout(instance.getCaseDto(), user));
 			
 			layout.addComponent(panel);
 			
