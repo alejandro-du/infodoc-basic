@@ -30,6 +30,7 @@ public class BasicConstants extends InfodocConstants {
 	public static final String uiHelpSingleUserGroupField = Utils.getProperty("ui.help.singleUserGroupField");
 	public static final String uiHelpTextField = Utils.getProperty("ui.help.textField");
 	public static final String uiHelpSingleUserField = Utils.getProperty("ui.help.singleUserField");
+	public static final String uiReferencingCasesField = Utils.getProperty("ui.help.referencingCasesField");
 	
 	public static final String uiHelpAssignSingleUserGroupActivity = Utils.getProperty("ui.help.assignSingleUserGroupActivity");
 	public static final String uiHelpAssignMultipleUserGroupsActivity = Utils.getProperty("ui.help.assignMultipleUserGroupsActivity");

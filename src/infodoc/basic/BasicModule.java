@@ -119,6 +119,7 @@ public class BasicModule extends InfodocModule implements Command {
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.MultipleCasesAssignedByMeField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleUserField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.SingleUserGroupField.class.getName());
+		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.ReferencingCasesField.class.getName());
 		
 		JavaReportFieldFactory.getJavaClasses().add(CapacityReport.class.getName());
 		JavaReportFieldFactory.getJavaClasses().add(FinalizedCasesReport.class.getName());

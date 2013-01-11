@@ -113,10 +113,12 @@ public class Create extends ActivityExecutor implements ClickListener {
 			
 			recipients += groups.toString().replace("[", "").replace("]", "");
 			
-			sendToCheckBox = new CheckBox(BasicConstants.uiAssignTo(recipients));
-			sendToCheckBox.setValue(true);
-			sendToCheckBox.setIcon(new ThemeResource(InfodocTheme.iconUserGroup));
-			form.addField("sendTo", sendToCheckBox);
+			if(!recipients.isEmpty()) {
+				sendToCheckBox = new CheckBox(BasicConstants.uiAssignTo(recipients));
+				sendToCheckBox.setValue(true);
+				sendToCheckBox.setIcon(new ThemeResource(InfodocTheme.iconUserGroup));
+				form.addField("sendTo", sendToCheckBox);
+			}
 		}
 	}
 	
