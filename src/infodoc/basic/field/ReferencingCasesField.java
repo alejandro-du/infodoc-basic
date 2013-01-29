@@ -73,7 +73,11 @@ public class ReferencingCasesField implements FieldFactory {
 			for(Case c : cases) {
 				String[] cells = new String[referencingForm.getProperties().size() + 1];
 				
-				cells[0] = "" + c.getNumber();
+				if(c.getNumber() != null) {
+					cells[0] = "" + c.getNumber();
+				} else {
+					cells[0] = "" + c.getId();
+				}
 				
 				for(int i = 1; i < cells.length; i++) {
 					for(PropertyValue pv : c.getPropertyValues()) {
