@@ -23,6 +23,7 @@ import infodoc.basic.validator.LongNumber;
 import infodoc.basic.validator.MaxStringLength;
 import infodoc.basic.validator.MinStringLength;
 import infodoc.basic.validator.Regexp;
+import infodoc.core.InfodocConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.HqlReport;
@@ -99,7 +100,15 @@ public class BasicModule extends InfodocModule implements Command {
 
 	@Override
 	public void init() {
-		Utils.loadProperties("basic-ui.properties", "basic-ui");
+		String language = InfodocConstants.infodocLanguage;
+		
+		if(language != null && !language.isEmpty()) {
+			language = "-" + language;
+		} else {
+			language = "";
+		}
+		
+		Utils.loadProperties("basic-ui" + language + ".properties", "basic-ui");
 		Utils.loadProperties("basic-configuration.properties", "basic-configuration");
 		addJavaClasses();
 		addOptions();
