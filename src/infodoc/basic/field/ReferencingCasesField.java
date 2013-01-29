@@ -55,6 +55,7 @@ public class ReferencingCasesField implements FieldFactory {
 		if(cases != null && !cases.isEmpty()) {
 			table = new Table();
 			table.setWidth("100%");
+			table.setPageLength(0);
 			table.setColumnReorderingAllowed(true);
 			table.setColumnCollapsingAllowed(true);
 			table.setCaption(property.getName());
