@@ -63,7 +63,7 @@ public abstract class AbstractCasesListReport extends AbstractDateIntervalReport
 		
 		if(form.getProperties() != null) {
 			for(Property property: form.getProperties()) {
-				if(!property.getDisabled()) {
+				if(!property.isDisabled()) {
 					names.add(PROPERTY + property.getId());
 				}
 			}
@@ -86,7 +86,7 @@ public abstract class AbstractCasesListReport extends AbstractDateIntervalReport
 		
 		if(form.getProperties() != null) {
 			for(Property property : form.getProperties()) {
-				if(!property.getDisabled()) {
+				if(!property.isDisabled()) {
 					classes.add(String.class);
 				}
 			}
@@ -111,7 +111,7 @@ public abstract class AbstractCasesListReport extends AbstractDateIntervalReport
 		
 		if(form.getProperties() != null) {
 			for(Property property: form.getProperties()) {
-				if(!property.getDisabled()) {
+				if(!property.isDisabled()) {
 					titles.add(property.getName());
 				}
 			}
@@ -159,8 +159,8 @@ public abstract class AbstractCasesListReport extends AbstractDateIntervalReport
 	public boolean getDefalutColumnCheckBox(String property) {
 		if(form.getProperties() != null) {
 			for(Property p: form.getProperties()) {
-				if(!p.getDisabled()) {
-					if(property.equals(PROPERTY + p.getId()) && !p.getShowInReports()) {
+				if(!p.isDisabled()) {
+					if(property.equals(PROPERTY + p.getId()) && !p.isShowInReports()) {
 						return false;
 					}
 				}
@@ -226,7 +226,7 @@ public abstract class AbstractCasesListReport extends AbstractDateIntervalReport
 		
 		if(form.getProperties() != null) {
 			for(Property property: form.getProperties()) {
-				if(!property.getDisabled()) {
+				if(!property.isDisabled()) {
 					properties.add(new DynaProperty(PROPERTY + property.getId(), String.class));
 				}
 			}

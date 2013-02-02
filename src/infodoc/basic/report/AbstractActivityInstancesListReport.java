@@ -115,7 +115,7 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 		
 		if(form.getActivities() != null) {
 			for(Activity activity : form.getActivities()) {
-				if(!activity.getDisabled()) {
+				if(!activity.isDisabled()) {
 					names.add(ACTIVITY + activity.getId());
 				}
 			}
@@ -129,7 +129,7 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 		
 		if(form.getActivities() != null) {
 			for(Activity activity : form.getActivities()) {
-				if(!activity.getDisabled()) {
+				if(!activity.isDisabled()) {
 					classes.add(Long.class);
 				}
 			}
@@ -144,7 +144,7 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 		
 		if(form.getActivities() != null) {
 			for(Activity activity : form.getActivities()) {
-				if(!activity.getDisabled()) {
+				if(!activity.isDisabled()) {
 					titles.add(activity.getName());
 				}
 			}
@@ -159,7 +159,7 @@ public abstract class AbstractActivityInstancesListReport extends AbstractDateIn
 		
 		if(form.getActivities() != null) {
 			for(Activity activity: form.getActivities()) {
-				if(!activity.getDisabled()) {
+				if(!activity.isDisabled()) {
 					properties.add(new DynaProperty(ACTIVITY + activity.getId(), Long.class));
 				}
 			}

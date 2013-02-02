@@ -60,7 +60,7 @@ public class BooleanField implements FieldFactory {
 			
 			if(field != null) {
 				field.setVisible(visible);
-				field.setRequired(!form.isShowShearchProperties() && visible && property.getRequired());
+				field.setRequired(!form.isShowShearchProperties() && visible && property.isRequired());
 			}
 		}
 

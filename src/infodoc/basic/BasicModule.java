@@ -160,7 +160,7 @@ public class BasicModule extends InfodocModule implements Command {
 	
 	@Override
 	public boolean userCanAccess(enterpriseapp.hibernate.dto.User user) {
-		return ((User) user).getUserGroup().getAccessBasicModule();
+		return ((User) user).getUserGroup().isAccessBasicModule();
 	}
 
 	@Override

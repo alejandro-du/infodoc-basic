@@ -65,11 +65,11 @@ public class Dashboard extends CustomComponent {
 		accordion.setSizeFull();
 		accordion.setStyleName(InfodocTheme.ACCORDION_OPAQUE);
 		
-		if(user.getUserGroup().getAccessBasicModule()) {
+		if(user.getUserGroup().isAccessBasicModule()) {
 			accordion.addTab(myInstancesLayout, BasicConstants.uiMyCases);
 		}
 		
-		if(user.getUserGroup().getAccessLastActivityInstances()) {
+		if(user.getUserGroup().isAccessLastActivityInstances()) {
 			accordion.addTab(activityHistoryLayout, BasicConstants.uiLastActivityInstances);
 		}
 		
@@ -92,7 +92,7 @@ public class Dashboard extends CustomComponent {
 				
 		updateMyInstances();
 		
-		if(user.getUserGroup().getAccessLastActivityInstances()) {
+		if(user.getUserGroup().isAccessLastActivityInstances()) {
 			updateActivityHistory(numberOfLastActivities);
 		}
 		
