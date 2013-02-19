@@ -68,6 +68,21 @@ public class BasicModule extends InfodocModule implements Command {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BasicModule.class);
 	
+	static {
+		String language = InfodocConstants.infodocLanguage;
+		
+		if(language != null && !language.isEmpty()) {
+			language = "-" + language;
+		} else {
+			language = "";
+		}
+		
+		Utils.loadProperties("basic-ui" + language + ".properties", "basic-ui");
+		Utils.loadProperties("basic-configuration.properties", "basic-configuration");
+		addJavaClasses();
+		addOptions();
+	}
+	
 	private static final Listener listener = new Listener() {
 		
 		private TextField dashboardUrl = new TextField(BasicConstants.uiUserDashboardUrl);
@@ -100,21 +115,9 @@ public class BasicModule extends InfodocModule implements Command {
 
 	@Override
 	public void init() {
-		String language = InfodocConstants.infodocLanguage;
-		
-		if(language != null && !language.isEmpty()) {
-			language = "-" + language;
-		} else {
-			language = "";
-		}
-		
-		Utils.loadProperties("basic-ui" + language + ".properties", "basic-ui");
-		Utils.loadProperties("basic-configuration.properties", "basic-configuration");
-		addJavaClasses();
-		addOptions();
 	}
 	
-	public void addJavaClasses() {
+	public static void addJavaClasses() {
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.TextField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.TextAreaField.class.getName());
 		PropertyFieldFactory.getJavaClasses().add(infodoc.basic.field.BooleanField.class.getName());
@@ -154,7 +157,7 @@ public class BasicModule extends InfodocModule implements Command {
 		ValidationFieldFactory.getJavaClasses().add(Regexp.class.getName());
 	}
 	
-	public void addOptions() {
+	public static void addOptions() {
 		OptionsWindow.getListeners().add(listener);
 	}
 	
