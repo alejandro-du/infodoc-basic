@@ -18,21 +18,29 @@ public class Update extends ActivityListExecutorTemplate {
 
 	private static final long serialVersionUID = 1L;
 	
+	protected boolean dontAssign = false;
+	
 	public Update() {
 		super();
 	}
 
 	public Update(Activity activity, User user) {
 		super(activity, user);
+		parseParams(activity.getParameter());
+	}
+	
+	public void parseParams(String parameter) {
+		if(parameter != null && parameter.toLowerCase().equals("dontAssign".toLowerCase())) {
+			dontAssign = true;
+		}
 	}
 	
 	@Override
 	public void execute(CaseForm form) {
 		form.validate();
 		HashSet<User> users = new HashSet<User>();
-		String parameter = form.getActivity().getParameter();
 		
-		if(parameter == null || !parameter.toLowerCase().equals("dontAssign".toLowerCase())) {
+		if(!dontAssign) {
 			users.add(getUser());
 		}
 		

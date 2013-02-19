@@ -34,10 +34,10 @@ public class Create extends ActivityExecutor implements ClickListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Button createButton;
-	private CaseForm form;
-	private CasesList instancesListComponent;
-	private CheckBox sendToCheckBox;
+	protected Button createButton;
+	protected CaseForm form;
+	protected CasesList instancesListComponent;
+	protected CheckBox sendToCheckBox;
 	
 	public Create() {
 		super();
