@@ -69,6 +69,31 @@ public class BasicModule extends InfodocModule implements Command {
 	private static final Logger logger = LoggerFactory.getLogger(BasicModule.class);
 	
 	static {
+		listener = new Listener() {
+			
+			private TextField dashboardUrl = new TextField(BasicConstants.uiUserDashboardUrl);
+			
+			@Override
+			public void addComponent(FormLayout formLayout) {
+				formLayout.addComponent(dashboardUrl);
+			}
+			
+			@Override
+			public void attach(User user) {
+				if(user.getDashboardUrl() == null || user.getDashboardUrl().isEmpty()) {
+					dashboardUrl.setValue(BasicConstants.infodocBasicDefaultDashboardUrl);
+				} else {
+					dashboardUrl.setValue(user.getDashboardUrl());
+				}
+			}
+			
+			@Override
+			public void updateButtonClick(User user) {
+				user.setDashboardUrl(dashboardUrl.getValue().toString());
+			}
+			
+		};
+		
 		String language = InfodocConstants.infodocLanguage;
 		
 		if(language != null && !language.isEmpty()) {
@@ -83,30 +108,7 @@ public class BasicModule extends InfodocModule implements Command {
 		addOptions();
 	}
 	
-	private static final Listener listener = new Listener() {
-		
-		private TextField dashboardUrl = new TextField(BasicConstants.uiUserDashboardUrl);
-		
-		@Override
-		public void addComponent(FormLayout formLayout) {
-			formLayout.addComponent(dashboardUrl);
-		}
-		
-		@Override
-		public void attach(User user) {
-			if(user.getDashboardUrl() == null || user.getDashboardUrl().isEmpty()) {
-				dashboardUrl.setValue(BasicConstants.infodocBasicDefaultDashboardUrl);
-			} else {
-				dashboardUrl.setValue(user.getDashboardUrl());
-			}
-		}
-		
-		@Override
-		public void updateButtonClick(User user) {
-			user.setDashboardUrl(dashboardUrl.getValue().toString());
-		}
-		
-	};
+	private static final Listener listener;
 	
 	private MDIWindow mdiWindow;
 	private User user;
