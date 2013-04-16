@@ -34,7 +34,7 @@ public abstract class AbstractCases implements FieldFactory {
 	
 	@Override
 	public FieldType getType() {
-		return FieldType.PROCESS_INSTANCES;
+		return FieldType.CASES;
 	}
 	
 	@Override
