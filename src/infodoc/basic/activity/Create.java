@@ -3,6 +3,7 @@ package infodoc.basic.activity;
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Case;
+import infodoc.core.dto.PropertyValue;
 import infodoc.core.dto.UserGroup;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
@@ -12,6 +13,7 @@ import infodoc.core.ui.cases.CasesList;
 import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.HashSet;
+import java.util.List;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.terminal.Resource;
@@ -122,27 +124,6 @@ public class Create extends ActivityExecutor implements ClickListener {
 		}
 	}
 	
-	@Override
-	public void buttonClick(ClickEvent event) {
-		if(createButton.equals(event.getButton())) {
-			form.setComponentError(null);
-			
-			try {
-				form.validate();
-				Case caseDto = saveCase();
-				Db.commitTransaction();
-				caseDto = InfodocContainerFactory.getCaseContainer().getEntity(caseDto.getId());
-				form.clear();
-				addSendTo();
-				instancesListComponent.addAtBeginning(caseDto);
-				getWindow().showNotification(BasicConstants.uiActivityExecuted);
-				
-			} catch (InvalidValueException e) {
-				form.setComponentError(new UserError(e.getMessage()));
-			}
-		}
-	}
-	
 	public void parseParams(String parameter, HashSet<User> users, HashSet<UserGroup> userGroups) {
 		String[] params = parameter.split(",");
 		Boolean assignUsers = false;
@@ -195,7 +176,47 @@ public class Create extends ActivityExecutor implements ClickListener {
 		}
 	}
 
-	public Case saveCase() {
+	@Override
+	public void buttonClick(ClickEvent event) {
+		if(createButton.equals(event.getButton())) {
+			form.setComponentError(null);
+			
+			try {
+				form.validate();
+				List<PropertyValue> propertyValuesToSave = form.getPropertyValues();
+				
+				if(!beforeSaveCase(propertyValuesToSave)) {
+					return;
+				}
+				
+				Case caseDto = saveCase(propertyValuesToSave);
+				
+				if(!afterSaveCase(propertyValuesToSave)) {
+					return;
+				}
+				
+				Db.commitTransaction();
+				caseDto = InfodocContainerFactory.getCaseContainer().getEntity(caseDto.getId());
+				form.clear();
+				addSendTo();
+				instancesListComponent.addAtBeginning(caseDto);
+				getWindow().showNotification(BasicConstants.uiActivityExecuted);
+				
+			} catch (InvalidValueException e) {
+				form.setComponentError(new UserError(e.getMessage()));
+			}
+		}
+	}
+	
+	public boolean beforeSaveCase(List<PropertyValue> propertyValuesToSave) {
+		return true;
+	}
+
+	public boolean afterSaveCase(List<PropertyValue> propertyValuesToSave) {
+		return true;
+	}
+
+	public Case saveCase(List<PropertyValue> propertyValuesToSave) {
 		HashSet<User> users = new HashSet<User>();
 		HashSet<UserGroup> userGroups = new HashSet<UserGroup>();
 		
@@ -215,7 +236,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 			userGroups = null;
 		}
 		
-		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), form.getPropertyValues(), getNewActivityInstance(form.getCase(), form.getComments(), users, userGroups));
+		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), propertyValuesToSave, getNewActivityInstance(form.getCase(), form.getComments(), users, userGroups));
 	}
 	
 	@Override
