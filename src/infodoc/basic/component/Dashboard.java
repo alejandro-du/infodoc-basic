@@ -32,6 +32,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import enterpriseapp.EnterpriseApplication;
 import enterpriseapp.Utils;
 
 public class Dashboard extends CustomComponent {
@@ -277,7 +278,7 @@ public class Dashboard extends CustomComponent {
 		String url = user.getDashboardUrl();
 		
 		if(url == null || url.isEmpty()) {
-			url = BasicConstants.infodocBasicDefaultDashboardUrl;
+			url = Utils.getWebContextPath(EnterpriseApplication.getInstance()) + BasicConstants.infodocBasicDefaultDashboardUrl;
 		}
 		
 		Embedded page = new Embedded("", new ExternalResource(url));

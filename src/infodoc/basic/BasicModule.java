@@ -59,6 +59,7 @@ import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.TextField;
 
+import enterpriseapp.EnterpriseApplication;
 import enterpriseapp.Utils;
 import enterpriseapp.ui.window.MDIWindow;
 
@@ -81,7 +82,7 @@ public class BasicModule extends InfodocModule implements Command {
 			@Override
 			public void attach(User user) {
 				if(user.getDashboardUrl() == null || user.getDashboardUrl().isEmpty()) {
-					dashboardUrl.setValue(BasicConstants.infodocBasicDefaultDashboardUrl);
+					dashboardUrl.setValue(Utils.getWebContextPath(EnterpriseApplication.getInstance()) + BasicConstants.infodocBasicDefaultDashboardUrl);
 				} else {
 					dashboardUrl.setValue(user.getDashboardUrl());
 				}
