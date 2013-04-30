@@ -40,6 +40,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 	protected CaseForm form;
 	protected CasesList instancesListComponent;
 	protected CheckBox sendToCheckBox;
+	protected boolean useNumeration = true;
 	
 	public Create() {
 		super();
@@ -236,7 +237,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 			userGroups = null;
 		}
 		
-		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), propertyValuesToSave, getNewActivityInstance(form.getCase(), form.getComments(), users, userGroups));
+		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), propertyValuesToSave, getNewActivityInstance(form.getCase(), form.getComments(), users, userGroups), useNumeration);
 	}
 	
 	@Override
