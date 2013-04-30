@@ -170,8 +170,8 @@ public class BasicModule extends InfodocModule implements Command {
 	}
 
 	@Override
-	public void add(MDIWindow ventanaPrincipal, enterpriseapp.hibernate.dto.User user) {
-		this.mdiWindow = ventanaPrincipal;
+	public void add(MDIWindow mainWindow, enterpriseapp.hibernate.dto.User user) {
+		this.mdiWindow = mainWindow;
 		this.user = (User) user;
 		
 		List<Form> forms = InfodocContainerFactory.getFormContainer().findByDisabled(false);
@@ -180,7 +180,7 @@ public class BasicModule extends InfodocModule implements Command {
 			addForm(form);
 		}
 		
-		ventanaPrincipal.addWorkbenchContent(new Dashboard(), null, new ThemeResource(InfodocTheme.iconHome), false, false);
+		mainWindow.addWorkbenchContent(new Dashboard(), null, new ThemeResource(InfodocTheme.iconHome), false, false);
 		addSummary();
 	}
 
