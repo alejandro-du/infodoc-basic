@@ -41,6 +41,9 @@ public class Create extends ActivityExecutor implements ClickListener {
 	protected CasesList instancesListComponent;
 	protected CheckBox sendToCheckBox;
 	protected boolean useNumeration = true;
+	protected boolean dontAssign = false;
+	protected HashSet<User> assignUsers = new HashSet<User>();
+	protected HashSet<UserGroup> assignGroups = new HashSet<UserGroup>();
 	
 	public Create() {
 		super();
@@ -103,18 +106,20 @@ public class Create extends ActivityExecutor implements ClickListener {
 	}
 
 	private void addSendTo() {
-		if(getActivity().getParameter() != null && !getActivity().getParameter().isEmpty()) {
-			HashSet<User> users = new HashSet<User>();
-			HashSet<UserGroup> groups = new HashSet<UserGroup>();
-			parseParams(getActivity().getParameter(), users, groups);
+		parseParams();
+		
+		if(!assignUsers.isEmpty()) {
 			
-			String recipients = users.toString().replace("[", "").replace("]", "");
+			String recipients = assignUsers.toString().replace("[", "").replace("]", "");
 			
-			if(!recipients.isEmpty() && !groups.isEmpty()) {
-				recipients += ", ";
+			if(!assignGroups.isEmpty()) {
+				if(!recipients.isEmpty()) {
+					recipients += ", ";
+				}
+				
+				recipients += assignGroups.toString().replace("[", "").replace("]", "");
 			}
 			
-			recipients += groups.toString().replace("[", "").replace("]", "");
 			
 			if(!recipients.isEmpty()) {
 				sendToCheckBox = new CheckBox(BasicConstants.uiAssignTo(recipients));
@@ -125,56 +130,83 @@ public class Create extends ActivityExecutor implements ClickListener {
 		}
 	}
 	
-	public void parseParams(String parameter, HashSet<User> users, HashSet<UserGroup> userGroups) {
-		String[] params = parameter.split(",");
-		Boolean assignUsers = false;
-		Boolean assignUserGroups = false;
-		Boolean dontAssign = false;
+	public void parseParams() {
+		if(getActivity().getParameter() == null || getActivity().getParameter().isEmpty()) {
+			return;
+		}
 		
-		for(int i = 0; i < params.length; i++) {
+		String[] params = getActivity().getParameter().split(",");
+		int i = 0;
+		
+		while(i < params.length) {
 			String param = params[i].trim();
 			
 			if(param.toLowerCase().equals("assignUsers".toLowerCase())) {
-				assignUsers = true;
-				assignUserGroups = false;
-				dontAssign = false;
+				i = assignUsers(params, i + 1);
 				
 			} else if(param.toLowerCase().equals("assignGroups".toLowerCase())) {
-				assignUserGroups = true;
-				assignUsers = false;
-				dontAssign = false;
+				i = assignGroups(params, i + 1);
 				
 			} else if(param.toLowerCase().equals("dontAssign".toLowerCase())) {
-				dontAssign = true;
-				assignUsers = false;
-				assignUserGroups = false;
+				i = dontAssign(params, i + 1);
 				
 			} else {
-				if(assignUsers) {
-					User u = InfodocContainerFactory.getUserContainer().getEntity(new Long(param));
-					
-					if(u == null) {
-						throw new RuntimeException("User " + getActivity().getParameter() + ", configured in parameter of activity " + getActivity() + ", does not exist.");
-					}
-					
-					users.add(u);
-					
-				} else if(assignUserGroups) {
-					UserGroup g = InfodocContainerFactory.getUserGroupContainer().getEntity(new Long(param));
-					
-					if(g == null) {
-						throw new RuntimeException("User group " + getActivity().getParameter() + ", configured in parameter of activity " + getActivity() + ", does not exist.");
-					}
-					
-					userGroups.add(g);
-					
-				} else if(dontAssign && users.isEmpty() && userGroups.isEmpty()) {
-					
-				} else {
-					throw new RuntimeException("Wrong parameter for activity " + getActivity().toString() + ": " + parameter);
-				}
+				i = parseOther(params, i);
 			}
 		}
+	}
+	
+	protected int parseOther(String[] params, int startPosition) {
+		throw new RuntimeException("Wrong parameter for activity " + getActivity().toString() + ": " + params[startPosition]);
+	}
+	
+	protected int assignUsers(String[] params, int startPosition) {
+		int i = startPosition;
+		
+		while(i < params.length) {
+			try {
+				User u = InfodocContainerFactory.getUserContainer().getEntity(new Long(params[i].trim()));
+				
+				if(u == null) {
+					throw new RuntimeException("User " + getActivity().getParameter() + ", configured in parameter of activity " + getActivity() + ", does not exist.");
+				}
+				
+				assignUsers.add(u);
+				i++;
+				
+			} catch(NumberFormatException e) {
+				return i;
+			}
+		}
+		
+		return i;
+	}
+
+	protected int assignGroups(String[] params, int startPosition) {
+		int i = startPosition;
+		
+		while(i < params.length) {
+			try {
+				UserGroup g = InfodocContainerFactory.getUserGroupContainer().getEntity(new Long(params[i].trim()));
+				
+				if(g == null) {
+					throw new RuntimeException("User group " + getActivity().getParameter() + ", configured in parameter of activity " + getActivity() + ", does not exist.");
+				}
+				
+				assignGroups.add(g);
+				i++;
+				
+			} catch(NumberFormatException e) {
+				return i;
+			}
+		}
+		
+		return i;
+	}
+
+	protected int dontAssign(String[] params, int startPosition) {
+		dontAssign = true;
+		return startPosition;
 	}
 
 	@Override
@@ -218,26 +250,18 @@ public class Create extends ActivityExecutor implements ClickListener {
 	}
 
 	public Case saveCase(List<PropertyValue> propertyValuesToSave) {
-		HashSet<User> users = new HashSet<User>();
-		HashSet<UserGroup> userGroups = new HashSet<UserGroup>();
+		parseParams();
 		
-		if(sendToCheckBox != null && sendToCheckBox.booleanValue()) {
-			if(getActivity().getParameter() != null && !getActivity().getParameter().trim().isEmpty()) {
-				parseParams(getActivity().getParameter(), users, userGroups);
-			}
-		} else {
-			users.add(getUser());
+		if(sendToCheckBox == null || !sendToCheckBox.booleanValue()) {
+			assignUsers.clear();
+			assignGroups.clear();
 		}
 		
-		if(users.isEmpty()) {
-			users = null;
+		if(!dontAssign) {
+			assignUsers.add(getUser());
 		}
 		
-		if(userGroups.isEmpty()) {
-			userGroups = null;
-		}
-		
-		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), propertyValuesToSave, getNewActivityInstance(form.getCase(), form.getComments(), users, userGroups), useNumeration);
+		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), propertyValuesToSave, getNewActivityInstance(form.getCase(), form.getComments(), assignUsers, assignGroups), useNumeration);
 	}
 	
 	@Override
