@@ -2,8 +2,8 @@ package infodoc.basic.activity;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.Case;
 import infodoc.core.dto.Activity;
+import infodoc.core.dto.Case;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityListExecutorTemplate;
 import infodoc.core.ui.cases.CaseForm;
@@ -30,11 +30,34 @@ public class Update extends ActivityListExecutorTemplate {
 	}
 	
 	public void parseParams(String parameter) {
-		if(parameter != null && parameter.toLowerCase().equals("dontAssign".toLowerCase())) {
-			dontAssign = true;
+		if(getActivity().getParameter() == null || getActivity().getParameter().isEmpty()) {
+			return;
+		}
+		
+		String[] params = getActivity().getParameter().split(",");
+		int i = 0;
+		
+		while(i < params.length) {
+			String param = params[i].trim();
+			
+			if(param.toLowerCase().equals("dontAssign".toLowerCase())) {
+				i = dontAssign(params, i + 1);
+				
+			} else {
+				i = parseOther(params, i);
+			}
 		}
 	}
 	
+	protected int parseOther(String[] params, int startPosition) {
+		throw new RuntimeException("Wrong parameter for activity " + getActivity().toString() + ": " + params[startPosition]);
+	}
+	
+	protected int dontAssign(String[] params, int startPosition) {
+		dontAssign = true;
+		return startPosition;
+	}
+
 	@Override
 	public void execute(CaseForm form) {
 		form.validate();
@@ -44,9 +67,26 @@ public class Update extends ActivityListExecutorTemplate {
 			users.add(getUser());
 		}
 		
+		if(!beforeSaveCase(form)) {
+			return;
+		}
+		
 		Case caseDto = InfodocContainerFactory.getCaseContainer().getEntity(form.getCase().getId());
+		
+		if(!afterSaveCase(form)) {
+			return;
+		}
+		
 		InfodocContainerFactory.getCaseContainer().updateInstance(caseDto, form.getPropertyValues(), getNewActivityInstance(caseDto, form.getComments(), users, null));
 		update();
+	}
+
+	public boolean beforeSaveCase(CaseForm form) {
+		return true;
+	}
+
+	public boolean afterSaveCase(CaseForm form) {
+		return true;
 	}
 
 	@Override

@@ -219,12 +219,14 @@ public class Create extends ActivityExecutor implements ClickListener {
 				List<PropertyValue> propertyValuesToSave = form.getPropertyValues();
 				
 				if(!beforeSaveCase(propertyValuesToSave)) {
+					Db.rollBackTransaction();
 					return;
 				}
 				
 				Case caseDto = saveCase(propertyValuesToSave);
 				
 				if(!afterSaveCase(propertyValuesToSave)) {
+					Db.rollBackTransaction();
 					return;
 				}
 				
