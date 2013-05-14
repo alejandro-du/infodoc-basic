@@ -4,7 +4,6 @@ import infodoc.basic.activity.CreateAndScheduleCreate;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.Case;
-import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityExecutorHelper;
 
 import java.text.ParseException;
@@ -41,7 +40,7 @@ public class CreateActivityScheduler {
 					for(Case caseDto : cases) {
 						String cronExpression = createAndScheduleActivity.getCronExpression(caseDto.getPropertyValues());
 						Long scheduleActivityId = createAndScheduleActivity.getScheduleActivityId();
-						schedule(caseDto.getId(), scheduleActivityId, cronExpression);
+						schedule(caseDto.getId(), scheduleActivityId, cronExpression, createAndScheduleActivity.getUser().getId());
 					}
 					
 				}
@@ -52,19 +51,16 @@ public class CreateActivityScheduler {
 		}
 	}
 	
-	public static void schedule(Long caseId, Long scheduleActivityId, String cronExpression) {
+	public static void schedule(Long caseId, Long scheduleActivityId, String cronExpression, Long userId) {
 		try {
 			logger.info("Scheduling job for case " + caseId + " and activity " + scheduleActivityId + " (" + cronExpression + ")");
-			
-			Case caseDto = InfodocContainerFactory.getCaseContainer().getEntity(caseId);
-			User user = InfodocContainerFactory.getCaseContainer().getLastActivityInstance(caseDto).getUser();
 			
 			JobKey key = new JobKey(CreateActivityExecutionJob.class.getSimpleName() + "_" + caseId + "_" + scheduleActivityId);
 			JobDetail jobDetail = JobBuilder.newJob(CreateActivityExecutionJob.class)
 					.withIdentity(key)
 					.usingJobData("activityId", scheduleActivityId)
 					.usingJobData("caseId", caseId)
-					.usingJobData("userId", user.getId())
+					.usingJobData("userId", userId)
 					.build();
 			
 			CronTriggerImpl trigger = new CronTriggerImpl();

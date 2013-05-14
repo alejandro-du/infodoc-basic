@@ -9,6 +9,8 @@ import infodoc.core.dto.User;
 import java.util.Collection;
 import java.util.List;
 
+import enterpriseapp.EnterpriseApplication;
+
 public class CreateAndScheduleCreate extends Create {
 
 	private static final long serialVersionUID = 1L;
@@ -42,7 +44,7 @@ public class CreateAndScheduleCreate extends Create {
 	
 	@Override
 	public boolean afterSaveCase(List<PropertyValue> propertyValuesToSave) {
-		CreateActivityScheduler.schedule(form.getCase().getId(), scheduleActivityId, getCronExpression(propertyValuesToSave));
+		CreateActivityScheduler.schedule(form.getCase().getId(), scheduleActivityId, getCronExpression(propertyValuesToSave), ((User) EnterpriseApplication.getInstance().getUser()).getId());
 		return true;
 	}
 
