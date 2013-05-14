@@ -5,6 +5,7 @@ import infodoc.basic.activity.AssignMultipleUserGroups;
 import infodoc.basic.activity.AssignSingleUser;
 import infodoc.basic.activity.AssignSingleUserGroup;
 import infodoc.basic.activity.Create;
+import infodoc.basic.activity.CreateAndScheduleCreate;
 import infodoc.basic.activity.Transfer;
 import infodoc.basic.activity.Unassign;
 import infodoc.basic.activity.Update;
@@ -18,6 +19,7 @@ import infodoc.basic.report.FinalizedCasesReport;
 import infodoc.basic.report.PendingCasesReport;
 import infodoc.basic.report.PerformanceByUserGroupReport;
 import infodoc.basic.report.PerformanceByUserReport;
+import infodoc.basic.scheduling.CreateActivityScheduler;
 import infodoc.basic.validator.Email;
 import infodoc.basic.validator.LongNumber;
 import infodoc.basic.validator.MaxStringLength;
@@ -107,6 +109,7 @@ public class BasicModule extends InfodocModule implements Command {
 		Utils.loadProperties("basic-configuration.properties", "basic-configuration");
 		addJavaClasses();
 		addOptions();
+		CreateActivityScheduler.schedulePending();
 	}
 	
 	private static final Listener listener;
@@ -145,6 +148,7 @@ public class BasicModule extends InfodocModule implements Command {
 		JavaReportFieldFactory.getJavaClasses().add(ActivityVolumeByUser.class.getName());
 		
 		ActivityFieldFactory.getJavaClasses().add(Create.class.getName());
+		ActivityFieldFactory.getJavaClasses().add(CreateAndScheduleCreate.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(Update.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(AssignSingleUser.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(AssignMulipleUsers.class.getName());

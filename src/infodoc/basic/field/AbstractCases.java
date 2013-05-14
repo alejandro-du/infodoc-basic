@@ -3,10 +3,10 @@ package infodoc.basic.field;
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.CaseContainer;
 import infodoc.core.container.InfodocContainerFactory;
-import infodoc.core.dto.Case;
-import infodoc.core.dto.Property;
-import infodoc.core.dto.Form;
 import infodoc.core.dto.Activity;
+import infodoc.core.dto.Case;
+import infodoc.core.dto.Form;
+import infodoc.core.dto.Property;
 import infodoc.core.dto.User;
 import infodoc.core.field.FieldFactory;
 import infodoc.core.field.FieldType;
@@ -17,7 +17,6 @@ import infodoc.core.ui.cases.CaseForm;
 import java.util.Collection;
 import java.util.List;
 
-import com.vaadin.Application;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.AbstractSelect;
@@ -38,12 +37,11 @@ public abstract class AbstractCases implements FieldFactory {
 	}
 	
 	@Override
-	public Field getField(Property property, CaseForm form, Activity activity, Form formDto, final Application application) {
+	public Field getField(Property property, CaseForm form, Activity activity, Form formDto, final User user) {
 		final AbstractSelect select = getField();
 		
 		if(property.getParameter() != null && !property.getParameter().trim().isEmpty()) {
 			CaseContainer caseDtoContainer = InfodocContainerFactory.getCaseContainer();
-			User user = (User) application.getUser();
 			String[] params = property.getParameter().split(",");
 			Boolean caseDtosInActivities = null;
 			
@@ -76,7 +74,7 @@ public abstract class AbstractCases implements FieldFactory {
 							
 							@Override
 							public void valueChange(ValueChangeEvent event) {
-								executeActivity(select, new Long(param), (User) application.getUser());
+								executeActivity(select, new Long(param), user);
 							}
 						});
 					}
@@ -115,8 +113,8 @@ public abstract class AbstractCases implements FieldFactory {
 	}
 
 	@Override
-	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
-		return getField(property, form, activity, formDto, application);
+	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, User user) {
+		return getField(property, form, activity, formDto, user);
 	}
 	
 }

@@ -9,6 +9,7 @@ import infodoc.core.dto.Case;
 import infodoc.core.dto.Form;
 import infodoc.core.dto.Property;
 import infodoc.core.dto.PropertyValue;
+import infodoc.core.dto.User;
 import infodoc.core.field.FieldFactory;
 import infodoc.core.field.FieldType;
 import infodoc.core.ui.cases.CaseForm;
@@ -16,7 +17,6 @@ import infodoc.core.ui.common.InfodocTheme;
 
 import java.util.List;
 
-import com.vaadin.Application;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Table;
@@ -29,12 +29,12 @@ public class ReferencingCasesField implements FieldFactory {
 	}
 
 	@Override
-	public Field getField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
+	public Field getField(Property property, CaseForm form, Activity activity, Form formDto, User user) {
 		return getTable(property, form);
 	}
 
 	@Override
-	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, Application application) {
+	public Field getSearchField(Property property, CaseForm form, Activity activity, Form formDto, User user) {
 		return null;
 	}
 

@@ -37,6 +37,7 @@ public class BasicConstants extends InfodocConstants {
 	public static final String uiHelpAssignSingleUserActivity = Utils.getProperty("ui.help.assignSingleUserActivity");
 	public static final String uiHelpAssignMultipleUsersActivity = Utils.getProperty("ui.help.assignMultipleUsersActivity");
 	public static final String uiHelpCreateActivity = Utils.getProperty("ui.help.createActivity");
+	public static final String uiHelpCreateAndScheduleCreateActivity = Utils.getProperty("ui.help.createAndScheduleCreateActivity");
 	public static final String uiHelpUpdateActivity = Utils.getProperty("ui.help.updateActivity");
 	public static final String uiHelpUnassignActivity = Utils.getProperty("ui.help.unassignActivity");
 	public static final String uiHelpTransferActivity = Utils.getProperty("ui.help.transferActivity");

@@ -2,11 +2,11 @@ package infodoc.basic.activity;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
+import infodoc.core.dto.Activity;
 import infodoc.core.dto.Case;
 import infodoc.core.dto.PropertyValue;
-import infodoc.core.dto.UserGroup;
-import infodoc.core.dto.Activity;
 import infodoc.core.dto.User;
+import infodoc.core.dto.UserGroup;
 import infodoc.core.ui.activity.ActivityExecutor;
 import infodoc.core.ui.cases.CaseForm;
 import infodoc.core.ui.cases.CasesList;
@@ -212,34 +212,41 @@ public class Create extends ActivityExecutor implements ClickListener {
 	@Override
 	public void buttonClick(ClickEvent event) {
 		if(createButton.equals(event.getButton())) {
-			form.setComponentError(null);
+			execute();
+		}
+	}
+	
+	public void execute() {
+		form.setComponentError(null);
+		
+		try {
+			form.validate();
+			List<PropertyValue> propertyValuesToSave = form.getPropertyValues();
 			
-			try {
-				form.validate();
-				List<PropertyValue> propertyValuesToSave = form.getPropertyValues();
-				
-				if(!beforeSaveCase(propertyValuesToSave)) {
-					Db.rollBackTransaction();
-					return;
-				}
-				
-				Case caseDto = saveCase(propertyValuesToSave);
-				
-				if(!afterSaveCase(propertyValuesToSave)) {
-					Db.rollBackTransaction();
-					return;
-				}
-				
-				Db.commitTransaction();
-				caseDto = InfodocContainerFactory.getCaseContainer().getEntity(caseDto.getId());
-				form.clear();
-				addSendTo();
-				instancesListComponent.addAtBeginning(caseDto);
-				getWindow().showNotification(BasicConstants.uiActivityExecuted);
-				
-			} catch (InvalidValueException e) {
-				form.setComponentError(new UserError(e.getMessage()));
+			if(!beforeSaveCase(propertyValuesToSave)) {
+				Db.rollBackTransaction();
+				return;
 			}
+			
+			Case caseDto = saveCase(propertyValuesToSave);
+			
+			if(!afterSaveCase(propertyValuesToSave)) {
+				Db.rollBackTransaction();
+				return;
+			}
+			
+			Db.commitTransaction();
+			caseDto = InfodocContainerFactory.getCaseContainer().getEntity(caseDto.getId());
+			form.clear();
+			addSendTo();
+			instancesListComponent.addAtBeginning(caseDto);
+			
+			if(getWindow() != null) {
+				getWindow().showNotification(BasicConstants.uiActivityExecuted);
+			}
+			
+		} catch (InvalidValueException e) {
+			form.setComponentError(new UserError(e.getMessage()));
 		}
 	}
 	
@@ -279,6 +286,10 @@ public class Create extends ActivityExecutor implements ClickListener {
 	@Override
 	public Resource getIcon() {
 		return new ThemeResource(InfodocTheme.iconActivityCreate);
+	}
+
+	public CaseForm getCaseForm() {
+		return form;
 	}
 
 }
