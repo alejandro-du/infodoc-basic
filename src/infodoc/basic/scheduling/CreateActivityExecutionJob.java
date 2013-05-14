@@ -40,6 +40,7 @@ public class CreateActivityExecutionJob extends TransactionalJob {
 			
 		} else {
 			logger.info("Skiping execution of job for activity " + activityId + " and case " +  caseId);
+			CreateActivityScheduler.unschedule(caseId, activityId);
 		}
 	}
 
