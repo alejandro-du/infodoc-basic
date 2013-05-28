@@ -3,7 +3,6 @@ package infodoc.basic.activity;
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Activity;
-import infodoc.core.dto.Case;
 import infodoc.core.dto.User;
 import infodoc.core.ui.activity.ActivityListExecutorTemplate;
 import infodoc.core.ui.cases.CaseForm;
@@ -71,13 +70,11 @@ public class Update extends ActivityListExecutorTemplate {
 			return;
 		}
 		
-		Case caseDto = InfodocContainerFactory.getCaseContainer().getEntity(form.getCase().getId());
-		
 		if(!afterSaveCase(form)) {
 			return;
 		}
 		
-		InfodocContainerFactory.getCaseContainer().updateInstance(caseDto, form.getPropertyValues(), getNewActivityInstance(caseDto, form.getComments(), users, null));
+		InfodocContainerFactory.getCaseContainer().updateInstance(form.getCase(), form.getPropertyValues(), getNewActivityInstance(form.getCase(), form.getComments(), users, null));
 		update();
 	}
 
