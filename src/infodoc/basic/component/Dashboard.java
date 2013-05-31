@@ -1,6 +1,7 @@
 package infodoc.basic.component;
 
 import infodoc.basic.BasicConstants;
+import infodoc.core.InfodocConstants;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Case;
 import infodoc.core.dto.Form;
@@ -92,6 +93,7 @@ public class Dashboard extends CustomComponent {
 		});
 				
 		updateMyInstances();
+		formSelect.setValue(InfodocConstants.uiShowAllCases);
 		
 		if(user.getUserGroup().isAccessLastActivityInstances()) {
 			updateActivityHistory(numberOfLastActivities);
@@ -130,7 +132,7 @@ public class Dashboard extends CustomComponent {
 		boolean instancesAdded = false;
 		
 		for(Form form : forms) {
-			if(formSelect.getValue() == null || formSelect.getValue().equals(form)) {
+			if(formSelect.getValue() == null || formSelect.getValue().equals(InfodocConstants.uiShowAllCases) || formSelect.getValue().equals(form)) {
 				List<Case> instances = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId());
 				
 				for(Case instance : instances) {
@@ -148,11 +150,17 @@ public class Dashboard extends CustomComponent {
 	public void updateFormFilter() {
 		List<Form> forms = InfodocContainerFactory.getFormContainer().findByUserId(user.getId());
 		
+		if(!forms.isEmpty()) {
+			formSelect.addItem(InfodocConstants.uiShowAllCases);
+		}
+		
 		for(Form form : forms) {
-			int total = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId()).size();
-
-			formSelect.addItem(form);
-			formSelect.setItemCaption(form, form.getName() + " (" + total + ")");
+			if(!form.isHideInDashboard()) {
+				int total = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId()).size();
+				
+				formSelect.addItem(form);
+				formSelect.setItemCaption(form, form.getName() + " (" + total + ")");
+			}
 		}
 	}
 	
