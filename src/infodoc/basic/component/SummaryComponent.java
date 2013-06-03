@@ -115,7 +115,7 @@ public class SummaryComponent extends CustomComponent implements ClickListener {
 			user = InfodocContainerFactory.getUserContainer().getEntity(user.getId());
 			
 			for(Activity activity : form.getActivities()) {
-				if(user.getUserGroup().getActivities().contains(activity)) {
+				if(!activity.isHideInSummary() && user.getUserGroup().getActivities().contains(activity)) {
 					if(addActivity(activity, form)) {
 						formAdded = true;
 					}
