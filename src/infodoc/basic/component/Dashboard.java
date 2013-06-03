@@ -132,7 +132,7 @@ public class Dashboard extends CustomComponent {
 		boolean instancesAdded = false;
 		
 		for(Form form : forms) {
-			if(formSelect.getValue() == null || formSelect.getValue().equals(InfodocConstants.uiShowAllCases) || formSelect.getValue().equals(form)) {
+			if(!form.isHideInDashboard() && (formSelect.getValue() == null || formSelect.getValue().equals(InfodocConstants.uiShowAllCases) || formSelect.getValue().equals(form))) {
 				List<Case> instances = InfodocContainerFactory.getCaseContainer().findMyCases(user.getId(), form.getId());
 				
 				for(Case instance : instances) {
