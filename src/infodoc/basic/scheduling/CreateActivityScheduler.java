@@ -23,7 +23,7 @@ public class CreateActivityScheduler {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CreateActivityScheduler.class);
 	
-	public static void schedulePending() {
+	public static void schedulePending() throws ParseException {
 		try {
 			List<Activity> activities = InfodocContainerFactory.getActivityContainer().listAll();
 		
@@ -40,7 +40,7 @@ public class CreateActivityScheduler {
 					for(Case caseDto : cases) {
 						String cronExpression = createAndScheduleActivity.getCronExpression(caseDto.getPropertyValues());
 						Long scheduleActivityId = createAndScheduleActivity.getScheduleActivityId();
-						schedule(caseDto.getId(), scheduleActivityId, cronExpression, createAndScheduleActivity.getUser().getId());
+						schedule(caseDto.getId(), scheduleActivityId, cronExpression, caseDto.getActivityInstances().iterator().next().getUser().getId());
 					}
 					
 				}
@@ -51,7 +51,7 @@ public class CreateActivityScheduler {
 		}
 	}
 	
-	public static void schedule(Long caseId, Long scheduleActivityId, String cronExpression, Long userId) {
+	public static void schedule(Long caseId, Long scheduleActivityId, String cronExpression, Long userId) throws ParseException {
 		try {
 			logger.info("Scheduling job for case " + caseId + " and activity " + scheduleActivityId + " (" + cronExpression + ")");
 			
@@ -70,8 +70,6 @@ public class CreateActivityScheduler {
 			EnterpriseApplication.getScheduler().scheduleJob(jobDetail, trigger);
 			
 		} catch (SchedulerException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
 	}

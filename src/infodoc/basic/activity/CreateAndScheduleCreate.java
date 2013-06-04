@@ -6,10 +6,13 @@ import infodoc.core.dto.Activity;
 import infodoc.core.dto.PropertyValue;
 import infodoc.core.dto.User;
 
+import java.text.ParseException;
 import java.util.Collection;
-import java.util.List;
+
+import com.vaadin.terminal.UserError;
 
 import enterpriseapp.EnterpriseApplication;
+import enterpriseapp.hibernate.Db;
 
 public class CreateAndScheduleCreate extends Create {
 
@@ -43,8 +46,14 @@ public class CreateAndScheduleCreate extends Create {
 	}
 	
 	@Override
-	public boolean afterSaveCase(List<PropertyValue> propertyValuesToSave) {
-		CreateActivityScheduler.schedule(form.getCase().getId(), scheduleActivityId, getCronExpression(propertyValuesToSave), ((User) EnterpriseApplication.getInstance().getUser()).getId());
+	public boolean afterSaveCase(Collection<PropertyValue> propertyValuesToSave) {
+			try {
+				CreateActivityScheduler.schedule(form.getCase().getId(), scheduleActivityId, getCronExpression(propertyValuesToSave), ((User) EnterpriseApplication.getInstance().getUser()).getId());
+			} catch (ParseException e) {
+				Db.rollBackTransaction();
+				form.setComponentError(new UserError(e.getMessage()));
+				throw new RuntimeException(e);
+			}
 		return true;
 	}
 

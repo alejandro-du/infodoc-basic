@@ -45,6 +45,7 @@ import infodoc.core.ui.fieldfactory.PropertyFieldFactory;
 import infodoc.core.ui.fieldfactory.ValidationFieldFactory;
 
 import java.lang.reflect.Constructor;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,12 @@ public class BasicModule extends InfodocModule implements Command {
 		Utils.loadProperties("basic-configuration.properties", "basic-configuration");
 		addJavaClasses();
 		addOptions();
-		CreateActivityScheduler.schedulePending();
+		
+		try {
+			CreateActivityScheduler.schedulePending();
+		} catch (ParseException e) {
+			logger.error("Can't schedule pending activities", e);
+		}
 	}
 	
 	private static final Listener listener;

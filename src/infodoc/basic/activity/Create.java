@@ -12,8 +12,11 @@ import infodoc.core.ui.cases.CaseForm;
 import infodoc.core.ui.cases.CasesList;
 import infodoc.core.ui.common.InfodocTheme;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.terminal.Resource;
@@ -35,6 +38,8 @@ import enterpriseapp.hibernate.Db;
 public class Create extends ActivityExecutor implements ClickListener {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = LoggerFactory.getLogger(Create.class);
 	
 	protected Button createButton;
 	protected CaseForm form;
@@ -221,7 +226,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 		
 		try {
 			form.validate();
-			List<PropertyValue> propertyValuesToSave = form.getPropertyValues();
+			Collection<PropertyValue> propertyValuesToSave = form.getPropertyValues();
 			
 			if(!beforeSaveCase(propertyValuesToSave)) {
 				Db.rollBackTransaction();
@@ -246,19 +251,20 @@ public class Create extends ActivityExecutor implements ClickListener {
 			}
 			
 		} catch (InvalidValueException e) {
+			logger.error("Error executing activity", e);
 			form.setComponentError(new UserError(e.getMessage()));
 		}
 	}
 	
-	public boolean beforeSaveCase(List<PropertyValue> propertyValuesToSave) {
+	public boolean beforeSaveCase(Collection<PropertyValue> propertyValuesToSave) {
 		return true;
 	}
 
-	public boolean afterSaveCase(List<PropertyValue> propertyValuesToSave) {
+	public boolean afterSaveCase(Collection<PropertyValue> propertyValuesToSave) {
 		return true;
 	}
 
-	public Case saveCase(List<PropertyValue> propertyValuesToSave) {
+	public Case saveCase(Collection<PropertyValue> propertyValuesToSave) {
 		parseParams();
 		
 		if(sendToCheckBox == null || !sendToCheckBox.booleanValue()) {
