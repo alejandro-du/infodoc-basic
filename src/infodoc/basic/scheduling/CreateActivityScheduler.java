@@ -7,6 +7,7 @@ import infodoc.core.dto.Case;
 import infodoc.core.ui.activity.ActivityExecutorHelper;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import org.quartz.JobBuilder;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import enterpriseapp.EnterpriseApplication;
+import enterpriseapp.Utils;
 
 public class CreateActivityScheduler {
 	
@@ -67,7 +69,8 @@ public class CreateActivityScheduler {
 			trigger.setName(CreateActivityScheduler.class.getSimpleName() + "_" + caseId + "_" + scheduleActivityId);
 			trigger.setCronExpression(cronExpression);
 		
-			EnterpriseApplication.getScheduler().scheduleJob(jobDetail, trigger);
+			Date date = EnterpriseApplication.getScheduler().scheduleJob(jobDetail, trigger);
+			logger.info("Job for case " + caseId + " and activity " + scheduleActivityId + "(" + cronExpression + ") starting at " + Utils.dateTimeToString(date));
 			
 		} catch (SchedulerException e) {
 			throw new RuntimeException(e);
