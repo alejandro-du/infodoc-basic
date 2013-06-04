@@ -1,6 +1,6 @@
 package infodoc.basic.scheduling;
 
-import infodoc.basic.activity.CreateAndScheduleCreate;
+import infodoc.basic.activity.Schedulable;
 import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.Case;
@@ -32,16 +32,16 @@ public class CreateActivityScheduler {
 			for(Activity activity : activities) {
 				Class<?> clazz = Class.forName(activity.getJavaClass());
 				
-				if(CreateAndScheduleCreate.class.isAssignableFrom(clazz)) {
+				if(Schedulable.class.isAssignableFrom(clazz)) {
 					
-					CreateAndScheduleCreate createAndScheduleActivity = (CreateAndScheduleCreate) ActivityExecutorHelper.getActivityExecutorComponent(activity, null);
-					createAndScheduleActivity.parseParams();
+					Schedulable schedulable = (Schedulable) ActivityExecutorHelper.getActivityExecutorComponent(activity, null);
+					schedulable.parseParams();
 					
 					List<Case> cases = InfodocContainerFactory.getCaseContainer().findByLastActivityId(activity.getId());
 					
 					for(Case caseDto : cases) {
-						String cronExpression = createAndScheduleActivity.getCronExpression(caseDto.getPropertyValues());
-						Long scheduleActivityId = createAndScheduleActivity.getScheduleActivityId();
+						String cronExpression = schedulable.getCronExpression(caseDto.getPropertyValues());
+						Long scheduleActivityId = schedulable.getScheduleActivityId();
 						schedule(caseDto.getId(), scheduleActivityId, cronExpression, caseDto.getActivityInstances().iterator().next().getUser().getId());
 					}
 					
@@ -58,6 +58,12 @@ public class CreateActivityScheduler {
 			logger.info("Scheduling job for case " + caseId + " and activity " + scheduleActivityId + " (" + cronExpression + ")");
 			
 			JobKey key = new JobKey(CreateActivityExecutionJob.class.getSimpleName() + "_" + caseId + "_" + scheduleActivityId);
+			
+			if(EnterpriseApplication.getScheduler().checkExists(key)) {
+				EnterpriseApplication.getScheduler().deleteJob(key);
+				logger.info("Job for case " + caseId + " and activity " + scheduleActivityId + " (" + cronExpression + ") deleted");
+			}
+			
 			JobDetail jobDetail = JobBuilder.newJob(CreateActivityExecutionJob.class)
 					.withIdentity(key)
 					.usingJobData("activityId", scheduleActivityId)

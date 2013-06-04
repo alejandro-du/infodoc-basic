@@ -1,10 +1,10 @@
 package infodoc.basic.activity;
 
-import infodoc.basic.BasicConstants;
 import infodoc.basic.scheduling.CreateActivityScheduler;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.PropertyValue;
 import infodoc.core.dto.User;
+import infodoc.core.ui.cases.CaseForm;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import com.vaadin.terminal.UserError;
 import enterpriseapp.EnterpriseApplication;
 import enterpriseapp.hibernate.Db;
 
-public class CreateAndScheduleCreate extends Create implements Schedulable {
+public class UpdateAndScheduleCreate extends Update implements Schedulable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -22,11 +22,11 @@ public class CreateAndScheduleCreate extends Create implements Schedulable {
 	
 	protected Long cronExpressionPropertyId;
 	
-	public CreateAndScheduleCreate() {
+	public UpdateAndScheduleCreate() {
 		super();
 	}
-	
-	public CreateAndScheduleCreate(Activity activity, User user) {
+
+	public UpdateAndScheduleCreate(Activity activity, User user) {
 		super(activity, user);
 	}
 	
@@ -44,14 +44,14 @@ public class CreateAndScheduleCreate extends Create implements Schedulable {
 		
 		return super.parseOther(params, startPosition);
 	}
-	
+
 	@Override
-	public boolean afterSaveCase(Collection<PropertyValue> propertyValuesToSave) {
+	public boolean afterSaveCase(CaseForm form) {
 		try {
 			CreateActivityScheduler.schedule(
 				form.getCase().getId(),
 				scheduleActivityId,
-				getCronExpression(propertyValuesToSave),
+				getCronExpression(form.getPropertyValues()),
 				((User) EnterpriseApplication.getInstance().getUser()).getId()
 			);
 		} catch (ParseException e) {
@@ -62,7 +62,7 @@ public class CreateAndScheduleCreate extends Create implements Schedulable {
 		
 		return true;
 	}
-
+	
 	public String getCronExpression(Collection<PropertyValue> propertyValues) {
 		String cronExpression = null;
 		
@@ -78,15 +78,6 @@ public class CreateAndScheduleCreate extends Create implements Schedulable {
 
 	public Long getScheduleActivityId() {
 		return scheduleActivityId;
-	}
-
-	public Long getCronExpressionPropertyId() {
-		return cronExpressionPropertyId;
-	}
-	
-	@Override
-	public String getHelp() {
-		return BasicConstants.uiHelpCreateAndScheduleCreateActivity;
 	}
 
 }

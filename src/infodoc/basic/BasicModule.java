@@ -9,6 +9,7 @@ import infodoc.basic.activity.CreateAndScheduleCreate;
 import infodoc.basic.activity.Transfer;
 import infodoc.basic.activity.Unassign;
 import infodoc.basic.activity.Update;
+import infodoc.basic.activity.UpdateAndScheduleCreate;
 import infodoc.basic.component.Dashboard;
 import infodoc.basic.component.SummaryComponent;
 import infodoc.basic.component.HqlReportViewer;
@@ -156,6 +157,7 @@ public class BasicModule extends InfodocModule implements Command {
 		ActivityFieldFactory.getJavaClasses().add(Create.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(CreateAndScheduleCreate.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(Update.class.getName());
+		ActivityFieldFactory.getJavaClasses().add(UpdateAndScheduleCreate.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(AssignSingleUser.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(AssignMulipleUsers.class.getName());
 		ActivityFieldFactory.getJavaClasses().add(AssignSingleUserGroup.class.getName());

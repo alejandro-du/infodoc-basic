@@ -25,10 +25,10 @@ public class Update extends ActivityListExecutorTemplate {
 
 	public Update(Activity activity, User user) {
 		super(activity, user);
-		parseParams(activity.getParameter());
+		parseParams();
 	}
 	
-	public void parseParams(String parameter) {
+	public void parseParams() {
 		if(getActivity().getParameter() == null || getActivity().getParameter().isEmpty()) {
 			return;
 		}
