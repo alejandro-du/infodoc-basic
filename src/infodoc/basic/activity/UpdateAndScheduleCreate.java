@@ -1,5 +1,6 @@
 package infodoc.basic.activity;
 
+import infodoc.basic.BasicConstants;
 import infodoc.basic.scheduling.CreateActivityScheduler;
 import infodoc.core.dto.Activity;
 import infodoc.core.dto.PropertyValue;
@@ -78,6 +79,11 @@ public class UpdateAndScheduleCreate extends Update implements Schedulable {
 
 	public Long getScheduleActivityId() {
 		return scheduleActivityId;
+	}
+
+	@Override
+	public String getHelp() {
+		return BasicConstants.uiHelpUpdateAndScheduleCreateActivity;
 	}
 
 }
