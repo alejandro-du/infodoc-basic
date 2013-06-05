@@ -46,6 +46,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 	protected CasesList instancesListComponent;
 	protected CheckBox sendToCheckBox;
 	protected boolean useNumeration = true;
+	protected boolean hideSendToCheckBox = false;
 	protected boolean dontAssign = false;
 	protected HashSet<User> assignUsers = new HashSet<User>();
 	protected HashSet<UserGroup> assignGroups = new HashSet<UserGroup>();
@@ -110,7 +111,7 @@ public class Create extends ActivityExecutor implements ClickListener {
 		addSendTo();
 	}
 
-	private void addSendTo() {
+	protected void addSendTo() {
 		parseParams();
 		
 		if(!assignUsers.isEmpty()) {
@@ -125,12 +126,14 @@ public class Create extends ActivityExecutor implements ClickListener {
 				recipients += assignGroups.toString().replace("[", "").replace("]", "");
 			}
 			
-			
 			if(!recipients.isEmpty()) {
 				sendToCheckBox = new CheckBox(BasicConstants.uiAssignTo(recipients));
 				sendToCheckBox.setValue(true);
 				sendToCheckBox.setIcon(new ThemeResource(InfodocTheme.iconUserGroup));
-				form.addField("sendTo", sendToCheckBox);
+				
+				if(!hideSendToCheckBox) {
+					form.addField("sendTo", sendToCheckBox);
+				}
 			}
 		}
 	}
@@ -151,6 +154,9 @@ public class Create extends ActivityExecutor implements ClickListener {
 				
 			} else if(param.toLowerCase().equals("assignGroups".toLowerCase())) {
 				i = assignGroups(params, i + 1);
+				
+			} else if(param.toLowerCase().equals("hideSendToCheckBox".toLowerCase())) {
+				i = hideSendToCheckBox(params, i + 1);
 				
 			} else if(param.toLowerCase().equals("dontAssign".toLowerCase())) {
 				i = dontAssign(params, i + 1);
@@ -207,6 +213,11 @@ public class Create extends ActivityExecutor implements ClickListener {
 		}
 		
 		return i;
+	}
+
+	protected int hideSendToCheckBox(String[] params, int startPosition) {
+		hideSendToCheckBox = true;
+		return startPosition;
 	}
 
 	protected int dontAssign(String[] params, int startPosition) {
