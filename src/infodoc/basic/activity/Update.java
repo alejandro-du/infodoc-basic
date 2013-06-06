@@ -70,12 +70,17 @@ public class Update extends ActivityListExecutorTemplate {
 			return;
 		}
 		
+		updateCase(form, users);
+		
 		if(!afterSaveCase(form)) {
 			return;
 		}
 		
-		InfodocContainerFactory.getCaseContainer().updateInstance(form.getCase(), form.getPropertyValues(), getNewActivityInstance(form.getCase(), form.getComments(), users, null));
 		update();
+	}
+
+	protected void updateCase(CaseForm form, HashSet<User> users) {
+		InfodocContainerFactory.getCaseContainer().updateInstance(form.getCase(), form.getPropertyValues(), getNewActivityInstance(form.getCase(), form.getComments(), users, null));
 	}
 
 	public boolean beforeSaveCase(CaseForm form) {
