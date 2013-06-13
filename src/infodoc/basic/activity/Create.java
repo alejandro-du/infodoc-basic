@@ -139,6 +139,9 @@ public class Create extends ActivityExecutor implements ClickListener {
 	}
 	
 	public void parseParams() {
+		assignUsers.clear();
+		assignGroups.clear();
+		
 		if(getActivity().getParameter() == null || getActivity().getParameter().isEmpty()) {
 			return;
 		}

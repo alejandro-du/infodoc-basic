@@ -2,6 +2,7 @@ package infodoc.basic.field;
 
 import infodoc.basic.BasicConstants;
 import infodoc.core.container.ClassificationValueContainer;
+import infodoc.core.container.InfodocContainerFactory;
 import infodoc.core.dto.ClassificationValue;
 
 import java.util.HashSet;
@@ -25,13 +26,33 @@ public class MultipleClassificationsField extends AbstractClassifications {
 					Set<ClassificationValue> classificationValues = new HashSet<ClassificationValue>();
 					
 					for(Object classificationValue : value) {
-						classificationValues.add((ClassificationValue) classificationValue);
+						
+						if(classificationValue instanceof String) {
+							classificationValues.add(getClassificationValue(value.toString()));
+						} else {
+							classificationValues.add((ClassificationValue) classificationValue);
+						}
 					}
 					
 					value = classificationValues;
 				}
 				
 				return value;
+			}
+			
+			private ClassificationValue getClassificationValue(String name) {
+				ClassificationValueContainer classificationValueContainer = InfodocContainerFactory.getClassificationValueContainer();
+				ClassificationValue classificationValue = classificationValueContainer.getByNameAndClassificationId(name, classificationId);
+				
+				if(classificationValue == null) {
+					classificationValue = new ClassificationValue();
+					classificationValue.setName(name);
+					classificationValue.setClassification(InfodocContainerFactory.getClassificationContainer().getEntity(classificationId));
+					classificationValue.setId(classificationValueContainer.saveEntity(classificationValue));
+					classificationValue = classificationValueContainer.getEntity(classificationValue.getId());
+				}
+				
+				return classificationValue;
 			}
 		};
 	}
