@@ -284,10 +284,10 @@ public class Create extends ActivityExecutor implements ClickListener {
 		if(sendToCheckBox == null || !sendToCheckBox.booleanValue()) {
 			assignUsers.clear();
 			assignGroups.clear();
-		}
-		
-		if(!dontAssign) {
-			assignUsers.add(getUser());
+			
+			if(!dontAssign) {
+				assignUsers.add(getUser());
+			}
 		}
 		
 		return InfodocContainerFactory.getCaseContainer().saveInstace(form.getCase(), propertyValuesToSave, getNewActivityInstance(form.getCase(), form.getComments(), assignUsers, assignGroups), useNumeration);
