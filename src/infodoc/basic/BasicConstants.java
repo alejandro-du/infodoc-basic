@@ -26,6 +26,8 @@ public class BasicConstants extends InfodocConstants {
 	public static final String uiHelpMultipleAssignedByMeCasesField = Utils.getProperty("ui.help.multipleAssignedByMeCasesField");
 	public static final String uiHelpMultipleCasesField = Utils.getProperty("ui.help.multipleCasesField");
 	public static final String uiHelpSingleCaseField = Utils.getProperty("ui.help.singleCaseField");
+	public static final String uiHelpSingleMyCasesField = Utils.getProperty("ui.help.singleMyCasesField");
+	public static final String uiHelpMultipleMyCasesField = Utils.getProperty("ui.help.multipleMyCasesField");
 	public static final String uiHelpDateField = Utils.getProperty("ui.help.dateField");
 	public static final String uiHelpSingleUserGroupField = Utils.getProperty("ui.help.singleUserGroupField");
 	public static final String uiHelpTextField = Utils.getProperty("ui.help.textField");
